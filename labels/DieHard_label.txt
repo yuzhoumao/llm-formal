@@ -1,0 +1,45 @@
+TLC2 Version 2.18 of 20 March 2023 (rev: 3ea3222)
+Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 93 and seed 5607187896844426332 with 1 worker on 8 cores with 2048MB heap and 64MB offheap memory [pid: 18207] (Mac OS X 12.4 x86_64, Amazon.com Inc. 11.0.12 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /Users/patience/Documents/llm-formal/input/die_hard/DieHard.tla
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module DieHard
+Starting... (2023-10-31 11:22:36)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2023-10-31 11:22:36.
+Error: Invariant NotSolved is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ big = 0
+/\ small = 0
+
+State 2: <FillBigJug line 68, col 18 to line 69, col 34 of module DieHard>
+/\ big = 5
+/\ small = 0
+
+State 3: <BigToSmall line 97, col 15 to line 98, col 48 of module DieHard>
+/\ big = 2
+/\ small = 3
+
+State 4: <EmptySmallJug line 71, col 18 to line 72, col 30 of module DieHard>
+/\ big = 2
+/\ small = 0
+
+State 5: <BigToSmall line 97, col 15 to line 98, col 48 of module DieHard>
+/\ big = 0
+/\ small = 2
+
+State 6: <FillBigJug line 68, col 18 to line 69, col 34 of module DieHard>
+/\ big = 5
+/\ small = 2
+
+State 7: <BigToSmall line 97, col 15 to line 98, col 48 of module DieHard>
+/\ big = 4
+/\ small = 3
+
+73 states generated, 14 distinct states found, 1 states left on queue.
+The depth of the complete state graph search is 7.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 2 and the 95th percentile is 2).
+Finished in 01s at (2023-10-31 11:22:37)
