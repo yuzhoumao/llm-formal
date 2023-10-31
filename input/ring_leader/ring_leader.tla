@@ -18,6 +18,9 @@ EXTENDS Naturals, Sequences
 (***************************************************************************)
 CONSTANTS N, Id
 
+ConstN == 6
+ConstId == <<27, 4, 42, 15, 63, 9>>
+
 Node == 1 .. N
 
 ASSUME
