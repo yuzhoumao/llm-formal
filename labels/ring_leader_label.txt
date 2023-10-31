@@ -1,7 +1,7 @@
 TLC2 Version 2.18 of 20 March 2023 (rev: 3ea3222)
 Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
 (Use the -nowarning option to disable this warning.)
-Running breadth-first search Model-Checking with fp 94 and seed -6017069641577743901 with 1 worker on 8 cores with 2048MB heap and 64MB offheap memory [pid: 16877] (Mac OS X 12.4 x86_64, Amazon.com Inc. 11.0.12 x86_64, MSBDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 3 and seed -4487143142283680499 with 1 worker on 8 cores with 2048MB heap and 64MB offheap memory [pid: 17530] (Mac OS X 12.4 x86_64, Amazon.com Inc. 11.0.12 x86_64, MSBDiskFPSet, DiskStateQueue).
 Parsing file /Users/patience/Documents/llm-formal/input/ring_leader/ring_leader.tla
 !! WARNING: The PlusCal algorithm in module ring_leader has changed since its last translation.
 Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/Naturals.tla
@@ -9,6 +9,59 @@ Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/Sequences.
 Semantic processing of module Naturals
 Semantic processing of module Sequences
 Semantic processing of module ring_leader
-Starting... (2023-10-31 11:09:46)
-Error: Assumption line 27, col 3 to line 30, col 45 of module ring_leader is false.
-Finished in 01s at (2023-10-31 11:09:46)
+Starting... (2023-10-31 11:13:58)
+Computing initial states...
+Computed 2 initial states...
+Computed 4 initial states...
+Computed 8 initial states...
+Computed 16 initial states...
+Computed 32 initial states...
+Finished computing initial states: 64 distinct states generated at 2023-10-31 11:13:59.
+Error: Deadlock reached.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n0", "n0", "n0", "n0", "n0", "n0">>
+
+State 2: <n0 line 82, col 13 to line 88, col 47 of module ring_leader>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n1", "n0", "n0", "n0", "n0", "n0">>
+
+State 3: <n0 line 82, col 13 to line 88, col 47 of module ring_leader>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n1", "n1", "n0", "n0", "n0", "n0">>
+
+State 4: <n0 line 82, col 13 to line 88, col 47 of module ring_leader>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n1", "n1", "n1", "n0", "n0", "n0">>
+
+State 5: <n0 line 82, col 13 to line 88, col 47 of module ring_leader>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n1", "n1", "n1", "n1", "n0", "n0">>
+
+State 6: <n0 line 82, col 13 to line 88, col 47 of module ring_leader>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n1", "n1", "n1", "n1", "n1", "n0">>
+
+State 7: <n0 line 82, col 13 to line 88, col 47 of module ring_leader>
+/\ state = <<"lost", "lost", "lost", "lost", "lost", "lost">>
+/\ msgs = <<{}, {}, {}, {}, {}, {}>>
+/\ initiator = <<FALSE, FALSE, FALSE, FALSE, FALSE, FALSE>>
+/\ pc = <<"n1", "n1", "n1", "n1", "n1", "n1">>
+
+23056 states generated, 8136 distinct states found, 1751 states left on queue.
+The depth of the complete state graph search is 7.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 6 and the 95th percentile is 4).
+Finished in 01s at (2023-10-31 11:13:59)
