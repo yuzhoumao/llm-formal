@@ -1,0 +1,10 @@
+Specification of an allocator managing a set of resources:         
+- Clients can request sets of resources whenever all their previous
+  requests have been satisfied.                                    
+- Requests can be partly fulfilled, and resources can be returned  
+  even before the full request has been satisfied. However, clients
+  only have an obligation to return resources after they have      
+  obtained all resources they requested.                           
+This allocator operates by repeatedly choosing a schedule according
+to which requests are satisfied. Resources can be allocated out of 
+order as long as no client earlier in the schedule asks for them.  
