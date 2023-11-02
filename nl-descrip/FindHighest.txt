@@ -1,0 +1,1 @@
+Defines a very simple algorithm that finds the largest value in a sequence of Natural numbers.
