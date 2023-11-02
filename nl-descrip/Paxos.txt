@@ -1,0 +1,13 @@
+The Paxos protocol is a distributed consensus algorithm designed to ensure that a group of computers (nodes) can agree on a single value, even if some nodes fail or messages between them are delayed or lost. It's commonly used in distributed systems to maintain data consistency.
+
+Initiation: The process starts with one node, called the "proposer," suggesting a value to be agreed upon.
+
+Preparation: The proposer sends a "prepare" message to the other nodes, known as "acceptors." This message includes a proposal number. The acceptors check the proposal number and promise not to accept any proposal with a lower number.
+
+Acceptance: If the acceptors haven't promised to accept a higher proposal number, they send an "accepted" message to the proposer, indicating they are willing to accept the proposed value.
+
+Majority Agreement: For a value to be accepted, it needs support from the majority of the acceptors. This ensures that a consensus is reached even if some nodes are unresponsive or fail.
+
+Finalization: Once the proposer receives "accepted" messages from the majority of the acceptors, it can send an "accept" message to all nodes, instructing them to use the proposed value.
+
+Learn and Apply: All nodes, upon receiving the "accept" message, apply the agreed-upon value, ensuring that they have reached a consensus on the proposed value.
