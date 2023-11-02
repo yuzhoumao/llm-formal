@@ -1,0 +1,4 @@
+A bridge over a river is only wide enough to permit a single lane of traffic.
+Consequently, cars can only move concurrently if they are moving in the same 
+direction. A safety violation occurs if two cars moving in different directions
+enter the bridge at the same time.
