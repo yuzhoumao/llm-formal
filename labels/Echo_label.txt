@@ -1,0 +1,44 @@
+TLC2 Version 2.18 of Day Month 20?? (rev: 7ef5199)
+Warning: Please run the Java VM, which executes TLC with a throughput optimized garbage collector, by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 37 and seed 3141153615570339890 with 4 workers on 8 cores with 2048MB heap and 64MB offheap memory [pid: 14507] (Mac OS X 12.4 x86_64, Amazon.com Inc. 11.0.12 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /Users/patience/Workplace/Examples/specifications/echo/MCEcho.tla
+Parsing file /Users/patience/Workplace/Examples/specifications/echo/Echo.tla
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/_TLCTrace.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/Naturals.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/FiniteSets.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /Users/patience/Workplace/Examples/specifications/echo/Relation.tla
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/TLC.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/Sequences.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/TLCExt.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /private/var/folders/c1/w_m81_n55cj2925gw95d25m40000gn/T/tlc-10768390361946762694/Integers.tla (jar:file:/Users/patience/Workplace/tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module Relation
+Semantic processing of module TLC
+Semantic processing of module Echo
+Semantic processing of module Integers
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module MCEcho
+Starting... (2023-11-02 10:50:29)
+Computing initial states...
+( <<"a", "a">> :> FALSE @@
+  <<"a", "b">> :> TRUE @@
+  <<"a", "c">> :> TRUE @@
+  <<"b", "a">> :> TRUE @@
+  <<"b", "b">> :> FALSE @@
+  <<"b", "c">> :> TRUE @@
+  <<"c", "a">> :> TRUE @@
+  <<"c", "b">> :> TRUE @@
+  <<"c", "c">> :> FALSE )
+Finished computing initial states: 1 distinct state generated at 2023-11-02 10:50:30.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 1.7E-16
+116 states generated, 75 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 16.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 3 and the 95th percentile is 2).
+Finished in 01s at (2023-11-02 10:50:30)

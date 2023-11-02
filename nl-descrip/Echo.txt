@@ -1,0 +1,6 @@
+The echo algorithm constructs a spanning tree in a connected undirected graph. We consider the nodes of the graph as agents. An agent has a unique id. It can send
+messages to its neighbors. The nodes cooperate by the following protocol to construct the tree:
+1. One of the nodes is chosen at random to begin the protocol. This the initiator. The other nodes are called participants. The initiator will end up being the root of the spannung tree. It initiates the protocol by sending its own id to each neighbor.
+2. Each participant checks its inbox and, if not empty, takes some message from it. If the participant has not yet marked a parent node, the id in this message becomes its parent and it sends its own id to each neighbor except its parent.
+3. When a participant has received messages from each of its neighbors, it sends its id to its parent.
+4. Finally, when the initiator has received an echo from each neighbor, the relation parent of pairs of nodes constructed in the course of the message exchange forms a spanning tree of the graph with the initiator as the root.
