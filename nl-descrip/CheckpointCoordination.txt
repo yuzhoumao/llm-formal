@@ -1,0 +1,8 @@
+There are five replicas in a Ring Master cluster, one of which is elected primary at any given time.
+The other four replicas are secondaries.
+These secondaries must occasionally take a checkpoint of their local state and upload the resulting codex to cloud storage as a backup.
+Currently, the secondaries take checkpoints at random.
+This means that occasionally multiple secondary replicas take checkpoints simultaneously.
+We want to begin performing read operations on secondaries, which is not possible while they are taking a checkpoint.
+Thus, we want only one secondary replica to take a checkpoint at any given time.
+We furthermore wish for the replicas to rotate evenly through taking a checkpoint.

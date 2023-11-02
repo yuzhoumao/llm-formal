@@ -1,0 +1,1 @@
+Compute the only candidate in a sequence who may occur in a strict majority of positions in the sequence. The algorithm makes a single pass over the sequence and uses only two integer variables and one variable holding the current candidate. A very simple second pass over the sequence could then detect whether the candidate actually holds a majority.
