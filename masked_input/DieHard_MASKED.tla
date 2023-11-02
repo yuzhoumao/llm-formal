@@ -44,8 +44,7 @@ TypeOK == /\ small \in 0..3
 (* values of the variables.  I like to name this predicate Init, but the   *)
 (* name doesn't matter.                                                    *)
 (***************************************************************************)
-Init == /\ big = 0 
-        /\ small = 0
+(* MASKED CODE *)
 
 (***************************************************************************)
 (* Now we define the actions that our hero can perform.  There are three   *)
@@ -71,7 +70,8 @@ FillBigJug    == /\ big' = 5
 EmptySmallJug == /\ small' = 0 
                  /\ big' = big
 
-(* MASKED CODE *)
+EmptyBigJug   == /\ big' = 0 
+                 /\ small' = small
 
 (***************************************************************************)
 (* We now consider pouring water from one jug into another.  Again, since  *)

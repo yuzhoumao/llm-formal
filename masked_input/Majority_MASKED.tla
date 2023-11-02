@@ -1,15 +1,3 @@
--------------------------------- MODULE Majority -----------------------------
-(****************************************************************************)
-(* TLA+ specification and proof of the majority vote algorithm due to Boyer *)
-(* and Moore.                                                               *)
-(* R.S. Boyer, J.S. Moore: MJRTY - A Fast Majority Vote Algorithm.          *)
-(* In: R.S. Boyer (ed.): Automated Reasoning: Essays in Honor of Woody      *)
-(* Bledsoe, pp. 105-117. Dordrecht, The Netherlands, 1991.                  *)
-(* Originally published in a technical report from 1981.                    *)
-(* The algorithm takes as input a sequence of values, makes one pass over   *)
-(* the sequence, and reports an element cand such that no element other     *)
-(* than cand may have an absolute majority in the sequence.                 *)
-(****************************************************************************)
 EXTENDS Integers, Sequences, FiniteSets
 
 CONSTANT Value
@@ -63,7 +51,7 @@ PositionsBefore(v,j) == { k \in 1 .. (j-1) : seq[k] = v }
 \* number of times v occurs in that prefix
 OccurrencesBefore(v,j) == Cardinality(PositionsBefore(v,j))
 \* number of times v occurs in all of the sequence
-(* MASKED CODE *)
+Occurrences(x) == OccurrencesBefore(x, Len(seq)+1)
 
 \* main correctness property: cand can be the only value that has a majority
 Correct == 

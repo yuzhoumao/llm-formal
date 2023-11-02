@@ -9,7 +9,7 @@ EXTENDS Integers, ZSequences
 
 CONSTANTS CharacterSet
 
-ASSUME CharacterSet \subseteq Nat
+(* MASKED CODE *)
 
 (****************************************************************************
 --algorithm LeastCircularSubstring
@@ -45,7 +45,7 @@ LVR:  j := j + 1;
     end while;
 end algorithm;
 
-(* MASKED CODE *)
+****************************************************************************)
 \* BEGIN TRANSLATION (chksum(pcal) = "c2e05615" /\ chksum(tla) = "81694c33")
 VARIABLES b, n, f, i, j, k, pc
 

@@ -38,7 +38,9 @@ succ(n) == IF n=N THEN 1 ELSE n+1  \* successor along the ring
   fair process (node \in Node)
      variables
        (* this node may be an initiator or not *)
-(* MASKED CODE *)
+       initiator \in BOOLEAN,
+       state = IF initiator THEN "cand" ELSE "lost";
+  {
        \* initiators send their own ID to their neighbor
    n0: if (initiator) {
           msgs[succ(self)] := @ \cup {Id[self]}
@@ -71,11 +73,7 @@ vars == << msgs, pc, initiator, state >>
 ProcSet == (Node)
 
 Init == (* Global variables *)
-        /\ msgs = [n \in Node |-> {}]
-        (* Process node *)
-        /\ initiator \in [Node -> BOOLEAN]
-        /\ state = [self \in Node |-> IF initiator[self] THEN "cand" ELSE "lost"]
-        /\ pc = [self \in ProcSet |-> "n0"]
+(* MASKED CODE *)
 
 n0(self) == /\ pc[self] = "n0"
             /\ IF initiator[self]

@@ -46,10 +46,7 @@ Request(c,S) ==
 
 (* Allocation of a set of available resources to a client that         *)
 (* requested them (the entire request does not have to be filled).     *)
-Allocate(c,S) ==
-  /\ S # {} /\ S \subseteq available \cap unsat[c]
-  /\ alloc' = [alloc EXCEPT ![c] = @ \cup S]
-  /\ unsat' = [unsat EXCEPT ![c] = @ \ S]
+(* MASKED CODE *)
 
 (* Client c returns a set of resources that it holds. It may do so     *)
 (* even before its full request has been honored.                      *)
@@ -98,7 +95,10 @@ Symmetry == Permutations(Clients) \cup Permutations(Resources)
 (* clients: resources need be returned only if the entire request has  *)
 (* been satisfied.                                                     *)
 
-(* MASKED CODE *)
+SimpleAllocator2 == 
+  /\ Init /\ [][Next]_vars
+  /\ \A c \in Clients: WF_vars(unsat[c] = {} /\ Return(c, alloc[c]))
+  /\ \A c \in Clients: SF_vars(\E S \in SUBSET Resources: Allocate(c,S))
 
 
 -------------------------------------------------------------------------

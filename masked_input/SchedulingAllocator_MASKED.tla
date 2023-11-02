@@ -15,7 +15,8 @@
 EXTENDS FiniteSets, Sequences, Naturals, TLC
 
 CONSTANTS
-(* MASKED CODE *)
+  Clients,     \* set of all clients
+  Resources    \* set of all resources
 
 ASSUME
   IsFiniteSet(Resources)
@@ -44,7 +45,7 @@ PermSeqs(S) ==
 
 (* Remove element at index i from a sequence.                          *)
 (* Assumes that i \in 1..Len(seq)                                      *)
-Drop(seq,i) == SubSeq(seq, 1, i-1) \circ SubSeq(seq, i+1, Len(seq))
+(* MASKED CODE *)
 
 (* Resources are available iff they have not been allocated. *)
 available == Resources \ (UNION {alloc[c] : c \in Clients})

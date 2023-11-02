@@ -72,13 +72,7 @@ Remove(t, k) == \* Using transaction t, remove key k from the store.
     /\ written' = [written EXCEPT ![t] = @ \cup {k}]
     /\ UNCHANGED <<tx, missed, store>>
     
-RollbackTx(t) ==    \* Close the transaction without merging writes into store.
-    /\ t \in tx
-    /\ tx' = tx \ {t}
-    /\ snapshotStore' = [snapshotStore EXCEPT ![t] = [k \in Key |-> NoVal]]
-    /\ written' = [written EXCEPT ![t] = {}]
-    /\ missed' = [missed EXCEPT ![t] = {}]
-    /\ UNCHANGED store
+(* MASKED CODE *)
 
 CloseTx(t) ==   \* Close transaction t, merging writes into store.
     /\ t \in tx

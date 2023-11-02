@@ -44,7 +44,9 @@ neighbors(n) == { m \in Node : R[m,n] }
               nbrs = neighbors(self);        {
   n0: if (self = initiator) {
          \* initiator sends first message to all its neighbors
-(* MASKED CODE *)
+         inbox := multicast(inbox, self, nbrs, "m")
+      };
+  n1: while (rcvd < Cardinality(nbrs)) {
          \* receive some message from a neighbor
          with (msg \in inbox[self],
                net = receive(inbox, self, msg)) {
@@ -127,15 +129,7 @@ n1(self) == /\ pc[self] = "n1"
                        /\ UNCHANGED << inbox, parent, children, rcvd >>
             /\ nbrs' = nbrs
 
-n2(self) == /\ pc[self] = "n2"
-            /\ IF self # initiator
-                  THEN /\ Assert((parent[self] \in nbrs[self]), 
-                                 "Failure of assertion at line 65, column 10.")
-                       /\ inbox' = send(inbox, self, parent[self], "c")
-                  ELSE /\ TRUE
-                       /\ inbox' = inbox
-            /\ pc' = [pc EXCEPT ![self] = "Done"]
-            /\ UNCHANGED << parent, children, rcvd, nbrs >>
+(* MASKED CODE *)
 
 node(self) == n0(self) \/ n1(self) \/ n2(self)
 

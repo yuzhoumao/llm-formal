@@ -55,7 +55,7 @@ Next == lb
 
 Spec == Init /\ [][Next]_vars
 
-Termination == <>(pc = "Done")
+(* MASKED CODE *)
 
 \* END TRANSLATION 
 
@@ -87,7 +87,13 @@ PROOF
   <1>b. TypeOK /\ UNCHANGED vars => TypeOK'
     BY DEFS TypeOK, vars
   \* The inductive case; usually requires breaking down Next into disjuncts
-(* MASKED CODE *)
+  <1>c. TypeOK /\ Next => TypeOK'
+    <2>a. TypeOK /\ lb => TypeOK'
+      BY DEFS TypeOK, lb, max
+    <2>b. TypeOK /\ Terminating => TypeOK'
+      BY DEFS TypeOK, Terminating, vars
+    <2> QED BY <2>a, <2>b DEF Next
+  <1> QED BY PTL, <1>a, <1>b, <1>c DEF Spec
 
 \* The inductive invariant; writing these is an art. You want an invariant
 \* that can be shown to be true in every state, and if it's true in all

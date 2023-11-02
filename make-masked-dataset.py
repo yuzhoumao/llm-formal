@@ -2,6 +2,9 @@ import os
 import argparse
 import random
 
+# Add a list of keywords to exclude from masking
+EXCLUDE_KEYWORDS = ['EXTENDS']#, 'CONSTANTS', 'VARIABLES', 'ASSUME']
+
 def mask_code_blocks(input_dir, masked_dir, blocks_to_mask):
     if not os.path.exists(masked_dir):
         os.makedirs(masked_dir)
@@ -12,74 +15,74 @@ def mask_code_blocks(input_dir, masked_dir, blocks_to_mask):
             tla_file = os.path.join(protocol_path, f"{protocol}.tla")
             if os.path.isfile(tla_file):
                 with open(tla_file, 'r') as file:
-                    content = file.readlines()
+                    lines = file.readlines()
 
+                masked_content = lines[:]
                 code_blocks = []
+                block_start = None
                 in_comment_block = False
-                in_keyword_block = False
-                skip_keywords = ['EXTENDS', 'CONSTANTS', 'VARIABLES', 'ASSUME']
-                code_block_start_idx = None
+                in_code_block = False
 
-                # Identify code blocks
-                for i, line in enumerate(content):
-                    if any(line.strip().startswith(kw) for kw in skip_keywords):
-                        in_keyword_block = True
-                    elif not line.strip().startswith("    ") and in_keyword_block:
-                        in_keyword_block = False
+                for i, line in enumerate(lines):
+                    # Check for the start of a multiline comment block
+                    if "(*" in line:
+                        in_comment_block = True
 
-                    if line.strip().startswith("(*") or line.strip().startswith("\\*"):
-                        if in_comment_block:  # End of comment block
-                            in_comment_block = False
-                        else:  # Start of comment block
-                            in_comment_block = True
-                            # If we were in a code block, end it before the comment
-                            if code_block_start_idx is not None:
-                                code_blocks.append((code_block_start_idx, i - 1))
-                                code_block_start_idx = None
+                    # Check for the end of a multiline comment block
+                    if "*)" in line and in_comment_block:
+                        in_comment_block = False
                         continue
 
-                    if in_comment_block or in_keyword_block or line.strip() == "":
-                        continue
+                    # Detect standalone comment line, not part of a comment block
+                    standalone_comment = line.strip().startswith("\\*") and not in_comment_block
 
-                    if code_block_start_idx is None:
-                        code_block_start_idx = i
-                    elif (i == len(content) - 1 or content[i + 1].strip() == "" or in_comment_block or in_keyword_block or any(content[i + 1].strip().startswith(kw) for kw in skip_keywords)):
-                        if code_block_start_idx != i:  # Check to avoid single-line/masked blank lines
-                            code_blocks.append((code_block_start_idx, i))
-                        code_block_start_idx = None
+                    # Check if line contains excluded keywords
+                    contains_exclude_keywords = any(keyword in line for keyword in EXCLUDE_KEYWORDS)
 
-                # Randomly select blocks to mask
-                blocks_to_mask_indices = random.sample(code_blocks, min(blocks_to_mask, len(code_blocks)))
+                    # Determine if this is the start of a new code block
+                    if not in_comment_block and not standalone_comment and not contains_exclude_keywords and line.strip() and block_start is None:
+                        block_start = i
+                        in_code_block = True
 
-                masked_content = content[:1]  # Start with the first line unmasked
+                    # Determine if this is the end of a code block
+                    if in_code_block and (standalone_comment or not line.strip() or "(*" in line):
+                        in_code_block = False
+                        code_blocks.append((block_start, i - 1))
+                        block_start = None
 
-                # Track whether we've inserted the masked code comment
-                inserted_mask_comment = False
-                for i, line in enumerate(content[1:], 1):
-                    if any(start <= i <= end for start, end in blocks_to_mask_indices) and line.strip() != "":
-                        if not inserted_mask_comment:
-                            # Insert the masked code comment once at the beginning of the block
-                            masked_content.append("(* MASKED CODE *)\n")
-                            inserted_mask_comment = True
-                    else:
-                        # If the line is not in a masked block, add it to the output and reset the comment flag
-                        masked_content.append(line)
-                        inserted_mask_comment = False
+                # If the last line of the file is part of a code block, close that block
+                if in_code_block:
+                    code_blocks.append((block_start, len(lines) - 1))
+
+                # Choose random code blocks to mask, not exceeding the specified number
+                blocks_to_mask = min(blocks_to_mask, len(code_blocks))
+                blocks_chosen_to_mask = random.sample(code_blocks, blocks_to_mask) if code_blocks else []
+
+                # Apply masking to the chosen blocks, avoiding lines with excluded keywords
+                for start, end in blocks_chosen_to_mask:
+                    for j in range(start, end + 1):
+                        if not any(keyword in masked_content[j] for keyword in EXCLUDE_KEYWORDS):
+                            masked_content[j] = ""  # Clear the line
+
+                    # Insert the "MASKED CODE" tag if the entire block has been cleared
+                    if start < len(masked_content) and not any(masked_content[j].strip() for j in range(start, end + 1)):
+                        masked_content[start] = "(* MASKED CODE *)\n"
 
                 # Write the masked content to a new file
                 masked_file_path = os.path.join(masked_dir, f"{protocol}_MASKED.tla")
                 with open(masked_file_path, 'w') as masked_file:
                     masked_file.writelines(masked_content)
 
+
 def main():
     parser = argparse.ArgumentParser(description='Mask code blocks in TLA+ specification files.')
     parser.add_argument('-i', '--input_dir', required=True, help='Input directory with TLA files.')
     parser.add_argument('-m', '--masked_dir', required=True, help='Output directory for masked TLA files.')
-    parser.add_argument('-b', '--blocks', type=int, default=1, help='Number of code blocks to mask per file.')
+    parser.add_argument('-b', '--blocks_to_mask', type=int, default=1, help='Number of code blocks to mask per file.')
 
     args = parser.parse_args()
 
-    mask_code_blocks(args.input_dir, args.masked_dir, args.blocks)
+    mask_code_blocks(args.input_dir, args.masked_dir, args.blocks_to_mask)
 
 if __name__ == "__main__":
     main()

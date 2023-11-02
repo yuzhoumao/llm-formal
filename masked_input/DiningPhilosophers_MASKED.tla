@@ -130,7 +130,7 @@ BothForksAreClean(p) ==
 
 CanEat(p) == IsHoldingBothForks(p) /\ BothForksAreClean(p)
 
-VARIABLE hungry
+(* MASKED CODE *)
 
 vars == << forks, pc, hungry >>
 
@@ -141,11 +141,13 @@ Init == (* Global variables *)
                        fork \in 1..NP |-> [
                    
                    
-(* MASKED CODE *)
+                           holder |-> IF fork = 2 THEN 1 ELSE fork,
                    
                    
                    
-(* MASKED CODE *)
+                           clean |-> FALSE
+                       ]
+                   ]
         (* Process Philosopher *)
         /\ hungry = [self \in 1..NP |-> TRUE]
         /\ pc = [self \in ProcSet |-> "Loop"]

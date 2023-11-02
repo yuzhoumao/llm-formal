@@ -15,9 +15,9 @@ Klotski == {{<<0, 0>>, <<0, 1>>},
             
 KlotskiGoal == {<<1, 3>>, <<1, 4>>, <<2, 3>>, <<2, 4>>} \notin board
             
-ChooseOne(S, P(_)) == CHOOSE x \in S : P(x) /\ \A y \in S : P(y) => y = x
-
 (* MASKED CODE *)
+
+TypeOK == board \in SUBSET Piece
 
 (***************************************************************************)
 (* Given a position and a set of empty positions return a set of           *)

@@ -79,7 +79,7 @@ Init == /\ maxBal = [a \in Acceptor |-> -1]
 (* The actions.  We begin with the subaction (an action that will be used  *)
 (* to define the actions that make up the next-state action.               *)
 (***************************************************************************)
-Send(m) == msgs' = msgs \cup {m}
+(* MASKED CODE *)
 
 
 (***************************************************************************)
@@ -97,7 +97,13 @@ Phase1a(b) == /\ Send([type |-> "1a", bal |-> b])
 (* b and sends a phase 1b message to the leader containing the values of   *)
 (* maxVBal[a] and maxVal[a].                                               *)
 (***************************************************************************)
-(* MASKED CODE *)
+Phase1b(a) == /\ \E m \in msgs : 
+                  /\ m.type = "1a"
+                  /\ m.bal > maxBal[a]
+                  /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
+                  /\ Send([type |-> "1b", acc |-> a, bal |-> m.bal, 
+                            mbal |-> maxVBal[a], mval |-> maxVal[a]])
+              /\ UNCHANGED <<maxVBal, maxVal>>
 
 (***************************************************************************)
 (* The Phase2a(b, v) action can be performed by the ballot b leader if two *)

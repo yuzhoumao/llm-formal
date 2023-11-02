@@ -44,7 +44,7 @@ ASSUME MaxBeanCount \in Nat /\ MaxBeanCount >= 1
 VARIABLES can
 
 \* The set of all possible cans
-(* MASKED CODE *)
+Can == [black : 0..MaxBeanCount, white : 0..MaxBeanCount]
 
 \* Possible values the can variable can take on
 TypeInvariant == can \in Can
@@ -105,10 +105,7 @@ TerminationHypothesis ==
 \* Start out in a state defined by the Init operator and every step is one
 \* defined by the Next operator. Assume weak fairness so the system can't
 \* stutter indefinitely: we eventually take some beans out of the can.
-Spec ==
-    /\ Init
-    /\ [][Next]_can
-    /\ WF_can(Next)
+(* MASKED CODE *)
 
 \* What we want to show: that if our system follows the rules set out by the
 \* Spec operator, then all our properties and assumptions will be satisfied.

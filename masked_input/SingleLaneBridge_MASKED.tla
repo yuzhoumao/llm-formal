@@ -30,9 +30,7 @@ SeqFromSet(S) ==
   ELSE LET x == CHOOSE x \in S : TRUE
        IN  << x >> \o SeqFromSet(S \ {x})
 
-Cars == CarsRight \union CarsLeft
-CarsInBridge == { c \in Cars : Location[c] \in Bridge }
-CarsBeforeBridge == { car \in CarsRight : EndPos - EndBridge = 1 } \cup { car \in CarsLeft : StartBridge - StartPos = 1 }
+(* MASKED CODE *)
 
 RMove(pos) == IF pos > StartPos THEN pos - 1 ELSE EndPos
 LMove(pos) == IF pos < EndPos THEN pos + 1 ELSE StartPos
@@ -51,7 +49,9 @@ HaveSameDirection(car) ==
     \/ car \in CarsLeft /\ \A c \in CarsInBridge : c \in CarsLeft
 
 \* Actions
-(* MASKED CODE *)
+MoveOutsideBridge(car) ==
+    /\ NextLocation(car) \notin Bridge
+    /\ ChangeLocation(car)
 
 MoveInsideBridge(car) ==
     /\ car \in CarsInBridge

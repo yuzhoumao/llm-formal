@@ -139,12 +139,7 @@ FastTypeOK == /\ PaxosTypeOK
 FastInit == /\ PaxosInit
             /\ cValue = none
 
-FastNext == \/ FastAny
-            \/ FastPropose
-            \/ FastDecide
-            \/ ClassicAccept
-            \/ ClassicAccepted
-            \/ ClassicDecide
+(* MASKED CODE *)
 
 FastSpec == /\ FastInit
             /\ [][FastNext]_<<messages, decision, maxBallot, maxVBallot, maxValue, cValue>>

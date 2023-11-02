@@ -134,7 +134,13 @@ CounterStep ==
   (* If switch A is up, the counter moves it down and increments his (or   *)
   (* her) count.  Otherwise, (s)he flips switch B.                         *)
   (*************************************************************************)
-(* MASKED CODE *)
+  /\ IF switchAUp
+       THEN /\ switchAUp' = FALSE
+            /\ UNCHANGED switchBUp
+            /\ count' =  count + 1
+       ELSE /\ switchBUp' = ~switchBUp
+            /\ UNCHANGED <<switchAUp, count>>
+  /\ UNCHANGED timesSwitched
 
 Next == 
   (*************************************************************************)
@@ -143,13 +149,7 @@ Next ==
   \/ CounterStep 
   \/ \E i \in OtherPrisoner : NonCounterStep(i)
 
-Fairness == 
-  (*************************************************************************)
-  (* This asserts that every prisoner is brought into the room infinitely  *)
-  (* often.                                                                *)
-  (*************************************************************************)
-  /\ WF_vars(CounterStep)
-  /\ \A i \in OtherPrisoner : WF_vars(NonCounterStep(i))
+(* MASKED CODE *)
 
 Spec == Init /\ [][Next]_vars /\ Fairness
 -----------------------------------------------------------------------------

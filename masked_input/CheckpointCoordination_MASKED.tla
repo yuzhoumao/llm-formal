@@ -90,7 +90,7 @@ MinLogIndex == 1
 (***************************************************************************)
 (* A blank log.                                                            *)
 (***************************************************************************)
-BlankLog == [i \in LogIndex |-> NoNode]
+(* MASKED CODE *)
 
 (***************************************************************************)
 (* The set of all log checkpoints.                                         *)
@@ -265,7 +265,17 @@ HaveQuorum ==
 (***************************************************************************)
 (* A node fails, losing all volatile local state.                          *)
 (***************************************************************************)
-(* MASKED CODE *)
+NodeFailure(n) ==
+  /\ IsNodeUp' = [IsNodeUp EXCEPT ![n] = FALSE]
+  /\ Leader' = IF n = Leader THEN NoNode ELSE Leader
+  /\ ExecutionCounter' = [ExecutionCounter EXCEPT ![n] = MinLogIndex]
+  /\ LastVotePayload' = [LastVotePayload EXCEPT ![n] = MinLogIndex]
+  /\ CurrentLease' = [CurrentLease EXCEPT ![n] = NoCheckpointLease]
+  /\ CanTakeCheckpoint' = [CanTakeCheckpoint EXCEPT ![n] = FALSE]
+  /\ IsTakingCheckpoint' = [IsTakingCheckpoint EXCEPT ![n] = FALSE]
+  /\ UNCHANGED <<NetworkPath>>
+  /\ UNCHANGED <<ReplicatedLog>>
+  /\ UNCHANGED <<TimeoutCounter, LatestCheckpoint>>
 
 (***************************************************************************)
 (* A node recovers. State is first rehydrated from the last checkpoint,    *)

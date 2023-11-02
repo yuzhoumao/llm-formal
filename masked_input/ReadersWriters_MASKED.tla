@@ -70,7 +70,7 @@ StopActivity(actor) ==
 
 Stop == \E actor \in readers \cup writers : StopActivity(actor)
 
----------------------------------------------------------------------------
+(* MASKED CODE *)
 
 (*****************)
 (* Specification *)
