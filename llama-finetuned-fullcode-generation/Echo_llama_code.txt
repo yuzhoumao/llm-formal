@@ -1,0 +1,56 @@
+messages to its neighbors. The nodes cooperate by the following protocol to construct the tree:
+1. One of the nodes is chosen at random to begin the protocol. This the initiator. The other nodes are called participants. The initiator will end up being the root of the spannung tree. It initiates the protocol by sending its own id to each neighbor.
+2. Each participant checks its inbox and, if not empty, takes some message from it. If the participant has not yet marked a parent node, the id in this message becomes its parent and it sends its own id to each neighbor except its parent.
+3. When a participant has received messages from each of its neighbors, it sends its id to its parent.
+4. Finally, when the initiator has received an echo from each neighbor, the relation parent of pairs of nodes constructed in the course of the message exchange forms a spanning tree of the graph with the initiator as the root.### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+module EchoAlgorithm {
+  type NodeID = int;
+  type Neighbor = (NodeID, NodeID);
+
+  signal init: NodeID; // initiator node
+  signal parent: NodeID; // parent node of a node
+  signal echo: Neighbor; // echo message
+
+  // protocol
+  procedure begin() {
+    // choose a random node as initiator
+    let init = NodeID(random(0, size(nodes)));
+    nodes(init).echo = init;
+  }
+
+  procedure send_echo(node: NodeID) {
+    // check if node has a parent
+    if (parent(node) = none) {
+      // mark node as parent
+      parent(node) = init;
+      // send echo message to neighbors
+      for (neighbor in nodes(node).neighbors) {
+        echo(neighbor) = node;
+      }
+    }
+  }
+
+  procedure receive_echo(node: NodeID) {
+    // check if node has a parent
+    if (parent(node) = none) {
+      // mark node as parent
+      parent(node) = init;
+      // receive echo message from neighbors
+      for (neighbor in nodes(node).neighbors) {
+        echo(neighbor) = node;
+      }
+    }
+  }
+}
+```
+This code defines a module `EchoAlgorithm` with three signals: `init`, `parent`, and `echo`. The `init` signal is used to choose a random node as the initiator, the `parent` signal is used to keep track of the parent node of each node, and the `echo` signal is used to keep track of the echo message sent by each node.
+
+The `begin` procedure is called when the protocol starts, and it chooses a random node as the initiator and sets its `echo` signal to the initiator.
+
+The `send_echo` procedure is called when a node receives an echo message, and it marks the node as the parent of the initiator and sends the echo message to its neighbors.
+
+The `receive_echo` procedure is called when a node receives an echo message, and it marks the node as the parent of the initiator and receives the echo message from its neighbors.
+
+Note that this code assumes that the graph is represented as a set of nodes and edges, and that the nodes are identified by their unique IDs. Also, the code uses the `NodeID` type to represent the IDs of the nodes, and the `Neighbor` type to represent the pairs of nodes that are connected by an edge.

@@ -1,0 +1,84 @@
+The other four replicas are secondaries.
+These secondaries must occasionally take a checkpoint of their local state and upload the resulting codex to cloud storage as a backup.
+Currently, the secondaries take checkpoints at random.
+This means that occasionally multiple secondary replicas take checkpoints simultaneously.
+We want to begin performing read operations on secondaries, which is not possible while they are taking a checkpoint.
+Thus, we want only one secondary replica to take a checkpoint at any given time.
+We furthermore wish for the replicas to rotate evenly through taking a checkpoint.### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+module Checkpointing {
+  sealed trait Replica
+  sealed trait Primary
+  sealed trait Secondary
+
+  type RingMaster = Replica * Replica * Replica * Replica * Replica
+
+  type Checkpoint = (RingMaster, Natural)
+
+  sealed trait CheckpointingPolicy {
+    type RingMaster
+    type Checkpoint
+    val policy: (RingMaster) -> Checkpoint
+  }
+
+  class RandomCheckpointingPolicy extends CheckpointingPolicy {
+    type RingMaster = Replica
+    type Checkpoint = (Replica, Natural)
+    val policy: (Replica) -> Checkpoint = (r) => (r, 0)
+  }
+
+  class FairCheckpointingPolicy extends CheckpointingPolicy {
+    type RingMaster = Replica
+    type Checkpoint = (Replica, Natural)
+    val policy: (Replica) -> Checkpoint = (r) => (r, r.ordinal())
+  }
+
+  sealed trait CheckpointingAlgorithm {
+    type RingMaster
+    type Checkpoint
+    val algorithm: (RingMaster, Checkpoint) -> Checkpoint
+  }
+
+  class RandomAlgorithm(implicit val random: Random) extends CheckpointingAlgorithm {
+    type RingMaster = Replica
+    type Checkpoint = (Replica, Natural)
+    val algorithm: (Replica, Checkpoint) -> Checkpoint = (r, c) => (r, c.next())
+  }
+
+  class FairAlgorithm(implicit val fair: Fair) extends CheckpointingAlgorithm {
+    type RingMaster = Replica
+    type Checkpoint = (Replica, Natural)
+    val algorithm: (Replica, Checkpoint) -> Checkpoint = (r, c) => (r, c.ordinal())
+  }
+}
+```
+This code defines a module `Checkpointing` with several types and functions related to checkpointing in a distributed system.
+
+The module includes four types:
+
+* `Replica`: The basic unit of the system, which may be primary or secondary.
+* `Primary`: A replica that is currently elected as the primary.
+* `Secondary`: A replica that is not the primary.
+* `RingMaster`: A tuple of five replicas, where one is the primary and the others are secondaries.
+
+The module also includes three policies for deciding when to take a checkpoint:
+
+* `RandomCheckpointingPolicy`: A policy that takes a checkpoint at random.
+* `FairCheckpointingPolicy`: A policy that takes a checkpoint in a fair manner, based on the ordinal number of the replica.
+* `RandomAlgorithm`: An algorithm that takes a checkpoint at random.
+* `FairAlgorithm`: An algorithm that takes a checkpoint in a fair manner.
+
+The `Checkpoint` type represents a checkpoint, which is a pair of a replica and a natural number indicating the order in which the checkpoint was taken.
+
+The `CheckpointingPolicy` type is a policy that specifies how often to take a checkpoint, and the `CheckpointingAlgorithm` type is an algorithm that specifies how to take a checkpoint.
+
+The `RandomCheckpointingPolicy` and `FairCheckpointingPolicy` classes implement the `CheckpointingPolicy` type, and the `RandomAlgorithm` and `FairAlgorithm` classes implement the `CheckpointingAlgorithm` type.
+
+The `policy` function in the `CheckpointingPolicy` type takes a replica and returns a checkpoint. The `algorithm` function in the `CheckpointingAlgorithm` type takes a replica and a checkpoint and returns a new checkpoint.
+
+The `RandomAlgorithm` and `FairAlgorithm` classes define the `algorithm` function using random or fair selection, respectively.
+
+The `RandomAlgorithm` class uses the `random` function to generate a random natural number, and the `FairAlgorithm` class uses the `fair` function to generate a natural number based on the ordinal number of the replica.
+
+The `Checkpointing` module provides a way to specify a checkpointing policy and algorithm, which can be used to ensure that checkpoints are taken in a consistent and predictable manner.

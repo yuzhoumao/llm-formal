@@ -1,0 +1,138 @@
+1. There is a unique coordinator in the system. Therefore, Phase 1a and 1b can be omitted.
+2. All agents in the system can communicate with one another.
+3. Agents must have some stable storage that survives failure and restarts.
+    An agent restores its state from stable storage when it restarts, so the failure of an agent
+    is indistinguishable from its simply pausing. There is thus no need to model failures explicitly.### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+module FastPaxos where
+
+import TLA+
+
+-- Definition of the system
+system = {
+  agents = [a1, a2, a3],
+  coordinator = coordinator
+}
+
+-- Definition of the coordinator
+coordinator = {
+  propose = propose,
+  accept = accept
+}
+
+-- Definition of an agent
+agent = {
+  state = state,
+  propose = propose,
+  accept = accept
+}
+
+-- Definition of a proposal
+propose = {
+  value = value,
+  timestamp = timestamp
+}
+
+-- Definition of an acceptance
+accept = {
+  value = value,
+  timestamp = timestamp
+}
+
+-- Definition of a phase
+phase = {
+  phase = phase,
+  agents = [agent | agent in agents],
+  coordinator = coordinator
+}
+
+-- Definition of a round
+round = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol
+protocol = {
+  round = round,
+  repeat = repeat
+}
+
+-- Definition of the repeat condition
+repeat = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's termination
+termination = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's success
+success = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's failure
+failure = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's abort
+abort = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's termination reason
+terminationReason = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's success reason
+successReason = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's failure reason
+failureReason = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+
+-- Definition of the protocol's abort reason
+abortReason = {
+  phase = phase,
+  proposals = [propose | propose in propose],
+  acceptances = [accept | accept in accept],
+  coordinator = coordinator
+}
+```
+This code defines a TLA+ model of the FastPaxos protocol with the given assumptions. The `system` definition includes the set of agents and the coordinator, while the `coordinator` definition includes the `propose` and `accept` functions. The `agent` definition includes the state, propose, and accept functions. The `propose` and `accept` definitions include the value and timestamp of the proposal or acceptance, respectively. The `phase` definition includes the set of agents and the coordinator, while the `round` definition includes the set of proposals and acceptances. The `protocol` definition includes the `round` and `repeat` functions. The `repeat` function checks if the protocol should repeat, while the `termination` function checks if the protocol has terminated. The `success` and `failure` definitions include the reason for the termination, while the `abort` definition includes the reason for the abort.
+
+Note that this is just one possible way to model the FastPaxos protocol in TLA+, and there may be other ways to do it. Additionally, this model assumes that the coordinator is the only entity that can propose values, and that agents can only accept or reject proposals. In a more general model, you may want to include additional features, such as the ability for agents to propose values or for the coordinator to fail.

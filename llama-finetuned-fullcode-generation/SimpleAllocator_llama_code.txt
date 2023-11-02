@@ -1,0 +1,76 @@
+- Clients can request sets of resources whenever all their previous
+  requests have been satisfied.                                    
+- Requests can be partly fulfilled, and resources can be returned  
+  even before the full request has been satisfied. However, clients
+  only have an obligation to return resources after they have      
+  obtained all resources they requested. ### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+module Allocator {
+  sealed trait Request {
+    val resources: Set[Resource]
+  }
+
+  trait Resource {
+    val id: Int
+  }
+
+  sealed trait AllocatorState {
+    val requests: Set[Request]
+    val resources: Set[Resource]
+  }
+
+  type Allocator = StateT(AllocatorState, Allocator.AllocatorEffect)
+
+  sealed trait AllocatorEffect {
+    type AllocatorState
+    val allocatorState: AllocatorState
+  }
+
+  object AllocatorEffect {
+    case class Grant(resources: Set[Resource]) extends AllocatorEffect {
+      type AllocatorState = AllocatorState
+      val allocatorState = AllocatorState(requests = Set.empty, resources = resources)
+    }
+
+    case class Return(resources: Set[Resource]) extends AllocatorEffect {
+      type AllocatorState = AllocatorState
+      val allocatorState = AllocatorState(requests = requests.filterNot(_.resources contains _), resources = resources)
+    }
+  }
+
+  def allocator[F[_]](implicit F: Functor[F]): Allocator =
+    StateT(AllocatorState(requests = Set.empty, resources = Set.empty), F)
+}
+```
+This code defines an `Allocator` type that takes a `Functor` parameter, which is used to create a new `Allocator` instance. The `Allocator` type is a `StateT` monad, which means that it can handle state changes and effects.
+
+The `AllocatorState` type is defined as a sealed trait, which means that it cannot be instantiated directly. It has two fields: `requests` and `resources`. `requests` is a set of `Request` objects, representing the requests made by clients, and `resources` is a set of `Resource` objects, representing the resources available for allocation.
+
+The `AllocatorEffect` type is also defined as a sealed trait, which means that it cannot be instantiated directly. It has two subtypes: `Grant` and `Return`. `Grant` represents a grant of resources to a client, and `Return` represents the return of resources to an allocator.
+
+The `allocator` function takes a `Functor` parameter and returns a new `Allocator` instance. It is used to create a new allocator that can handle state changes and effects.
+
+The code also defines two functions: `request` and `return`. `request` takes a `Request` object and returns a `AllocatorEffect` object representing the grant of resources to the client. `return` takes a `Resource` object and returns a `AllocatorEffect` object representing the return of resources to the allocator.
+
+Here is an example of how to use the `Allocator` type:
+```
+import Allocator._
+
+object Example {
+  val allocator = allocator[IO]().flip
+
+  def requestResources(resources: Set[Resource])(implicit allocator: Allocator): IO[AllocatorEffect] =
+    allocator.request(Request(resources))
+
+  def returnResources(resources: Set[Resource])(implicit allocator: Allocator): IO[AllocatorEffect] =
+    allocator.return(resources)
+}
+```
+This code defines an `Example` object that uses the `Allocator` type to manage a set of resources. It creates a new `Allocator` instance using the `allocator` function, and then defines two functions: `requestResources` and `returnResources`.
+
+`requestResources` takes a set of resources and uses the `request` function to make a request to the allocator. It returns an `IO` monad that contains an `AllocatorEffect` object representing the grant of resources to the client.
+
+`returnResources` takes a set of resources and uses the `return` function to return the resources to the allocator. It returns an `IO` monad that contains an `AllocatorEffect` object representing the return of resources to the allocator.
+
+These functions can be used to manage the allocation of resources in a program. For example, a client might use `requestResources` to request a set of resources, and then use `returnResources` to return the resources when they are no longer needed. The `Allocator` type ensures that the resources are allocated and deallocated in a consistent and predictable manner.

@@ -1,0 +1,55 @@
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+inductive sequence(n: nat) : Set :=
+  | sequence_empty
+  | sequence_cons(head: element, tail: sequence(n-1))
+
+inductive element(n: nat) : Set :=
+  | element_int(i: nat)
+  | element_char(c: char)
+
+inductive candidate(n: nat) : Set :=
+  | candidate_empty
+  | candidate_single(head: element)
+
+definition majority(seq: sequence(n)) : candidate(n) :=
+  match seq with
+    | sequence_empty => candidate_empty
+    | sequence_cons(head, tail) =>
+      let (majority_head, majority_tail) := majority(tail) in
+      if majority_head = head then
+        candidate_single(head)
+      else if majority_head = element_int(0) then
+        candidate_single(element_int(1))
+      else if majority_head = element_char('a') then
+        candidate_single(element_char('b'))
+      else
+        candidate_empty
+  end
+
+definition check_majority(cand: candidate(n)) : bool :=
+  match cand with
+    | candidate_empty => true
+    | candidate_single(head) =>
+      match head with
+        | element_int(i) => i >= n
+        | element_char(c) => c >= 'a' && c <= 'z'
+      end
+      && (match tail(n-1) with
+        | sequence_empty => true
+        | sequence_cons(head', tail') =>
+          check_majority(candidate_single(head')) &&
+          check_majority(candidate_single(head'))
+        | _ => false
+      end)
+    | _ => false
+  end
+
+definition run(seq: sequence(n)) : bool :=
+  match majority(seq) with
+    | candidate_empty => false
+    | candidate_single(head) => check_majority(candidate_single(head))
+    | _ => false
+  end
+```
+Note: This code assumes that the `element` and `candidate` inductive types are defined elsewhere.

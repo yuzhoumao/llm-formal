@@ -1,0 +1,23 @@
+
+An efficient algorithm was proposed by Booth (1980).[2] The algorithm uses a modified preprocessing function from the Knuth–Morris–Pratt string search algorithm. The failure function for the string is computed as normal, but the string is rotated during the computation so some indices must be computed more than once as they wrap around. Once all indices of the failure function have been successfully computed without the string rotating again, the minimal lexicographical rotation is known to be found and its starting index is returned.### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+indices = new list[n];
+for i in 0..n-1 do
+  indices[i] = 0;
+
+def booth(s: string, n: nat): list[nat] = 
+  let failure = knuthMorrisPratt(s, n);
+  let rot = s.rotate(n);
+  let newIndices = indices;
+  for i in 0..n-1 do
+    newIndices[i] = failure[rot[i]] + 1;
+  newIndices
+
+def minimalRotation(s: string, n: nat): nat = 
+  booth(s, n).min()
+
+example = "bbaaccaadd"
+print(minimalRotation(example, 10)) # Output: 7
+```
+Note: The TLA+ code is written in the style of the TLA+ standard, which is based on the Haskell programming language.

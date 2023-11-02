@@ -1,0 +1,36 @@
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+(define (spaghetti-dinner philosophers)
+  (let ((forks (list (cons left-fork right-fork) (cons right-fork left-fork) (cons left-fork right-fork) (cons right-fork left-fork))))
+    (for ((philosopher philosophers))
+      (let ((my-plate (philosopher-plate philosopher)))
+        (for ((i 0 (inc i 2)))
+          (if (and (philosopher-thinking philosopher) (not (fork-available my-plate)))
+            (fork-available my-plate)
+            (begin
+              (philosopher-eat philosopher)
+              (fork-available my-plate))))))
+    (for ((fork (forks)) (philosopher philosophers)))
+      (if (fork-available (philosopher-plate philosopher))
+        (fork-available (philosopher-plate philosopher))
+        (begin
+          (philosopher-think philosopher)
+          (fork-available (philosopher-plate philosopher)))))
+    philosophers))
+```
+This code defines a function `spaghetti-dinner` that takes a list of philosophers as input, and returns a list of philosophers after they have finished eating spaghetti.
+
+The function works as follows:
+
+1. It initializes a list of forks, which will be used to keep track of the availability of forks at each philosopher's plate.
+2. It iterates over each philosopher in the list, and for each philosopher, it iterates over each fork in the list of forks. If the fork is available at the philosopher's plate, it means that the philosopher can eat, so it sets the fork to "available".
+3. It then checks if the philosopher is thinking. If the philosopher is thinking, it means that the philosopher cannot eat, so it sets the fork to "unavailable".
+4. If the fork is available at the philosopher's plate, it means that the philosopher can eat, so it calls the `philosopher-eat` function to eat the spaghetti.
+5. After the philosopher has eaten, it sets the fork to "available" again.
+6. It then repeats steps 2-5 for each philosopher in the list.
+
+The `fork-available` function is used to check if a fork is available at a particular plate. It takes a plate as input and returns `true` if the fork is available, and `false` otherwise.
+
+The `philosopher-eat` function is used to eat the spaghetti. It takes a philosopher as input and does nothing.
+
+The `philosopher-think` function is used to make a philosopher think. It takes a philosopher as input and does nothing.

@@ -1,0 +1,85 @@
+
+Initiation: The process starts with one node, called the "proposer," suggesting a value to be agreed upon.
+
+Preparation: The proposer sends a "prepare" message to the other nodes, known as "acceptors." This message includes a proposal number. The acceptors check the proposal number and promise not to accept any proposal with a lower number.
+
+Acceptance: If the acceptors haven't promised to accept a higher proposal number, they send an "accepted" message to the proposer, indicating they are willing to accept the proposed value.
+
+Majority Agreement: For a value to be accepted, it needs support from the majority of the acceptors. This ensures that a consensus is reached even if some nodes are unresponsive or fail.
+
+Finalization: Once the proposer receives "accepted" messages from the majority of the acceptors, it can send an "accept" message to all nodes, instructing them to use the proposed value.
+
+Learn and Apply: All nodes, upon receiving the "accept" message, apply the agreed-upon value, ensuring that they have reached a consensus on the proposed value.### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+module Paxos {
+  sealed trait Proposal
+  case class ValueProposal(value: Value) extends Proposal
+  case class VoteProposal(proposal: Proposal, accepted: Boolean) extends Proposal
+
+  type Node = Entity {
+    id: ID
+    address: Address
+    port: Port
+    propose: Procedure[Proposal]
+    accept: Procedure[Proposal]
+  }
+
+  type Procedure[A] = Entity {
+    id: ID
+    address: Address
+    port: Port
+    apply: Procedure[A]
+  }
+
+  sealed trait Message {
+    type: Type
+  }
+
+  object Message {
+    case class Prepare(proposal: Proposal, node: Node) extends Message {
+      type = "prepare"
+    }
+
+    case class Accept(proposal: Proposal, node: Node) extends Message {
+      type = "accept"
+    }
+
+    case class Accepted(proposal: Proposal, nodes: List[Node]) extends Message {
+      type = "accepted"
+    }
+
+    case class AcceptedWithValue(proposal: Proposal, value: Value, nodes: List[Node]) extends Message {
+      type = "acceptedWithValue"
+    }
+  }
+
+  sealed trait State {
+    type: Type
+  }
+
+  object State {
+    case class Prepared(proposal: Proposal, nodes: List[Node]) extends State {
+      type = "prepared"
+    }
+
+    case class Accepted(proposal: Proposal, nodes: List[Node]) extends State {
+      type = "accepted"
+    }
+
+    case class Finalized(value: Value, nodes: List[Node]) extends State {
+      type = "finalized"
+    }
+  }
+
+  def paxos(nodes: List[Node], proposal: Proposal): State = {
+    val (prepared, accepted) = nodes.map(node => (node.propose(proposal), node.accept(proposal)))
+    if (prepared.size > accepted.size) {
+      Prepared(proposal, prepared)
+    } else {
+      Accepted(proposal, accepted)
+    }
+  }
+}
+```
+Note: This code is just an example implementation of the Paxos protocol in TLA+ and may not be complete or accurate. It is intended to demonstrate the basic concepts of the protocol and how they can be modeled using TLA+.

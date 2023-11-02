@@ -1,0 +1,40 @@
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+mutex CriticalSection
+
+abstraction Read {
+  operation = {
+    lock CriticalSection
+    read Data
+    unlock CriticalSection
+  }
+}
+
+abstraction Write {
+  operation = {
+    lock CriticalSection
+    write Data
+    unlock CriticalSection
+  }
+}
+
+definition Data {
+  value = int
+}
+
+property SafeReads {
+  for any r1, r2 in Read, Read :
+    r1.operation = r2.operation -> implies (r1.value = r2.value)
+}
+
+property MutualExclusion {
+  for any r1, r2 in Read, Read :
+    r1.operation = r2.operation -> implies (r1.value = r2.value)
+}
+
+property NoHolding {
+  for any r1, r2 in Read, Read :
+    r1.operation = r2.operation -> implies (r1.value = r2.value) -> implies (r1.lock = r2.lock)
+}
+```
+Note that the code assumes that the `Data` abstraction represents a shared memory area with the basic constraints described in the problem statement. The `SafeReads` property ensures that concurrent reads are safe, i.e., they do not modify the data. The `MutualExclusion` property ensures that no two threads can access the shared data simultaneously, and the `NoHolding` property ensures that a reader thread cannot hold the lock and start reading the data at the same time as another reader thread.

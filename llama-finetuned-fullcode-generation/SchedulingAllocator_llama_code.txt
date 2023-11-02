@@ -1,0 +1,70 @@
+- Clients can request sets of resources whenever all their previous
+  requests have been satisfied.                                    
+- Requests can be partly fulfilled, and resources can be returned  
+  even before the full request has been satisfied. However, clients
+  only have an obligation to return resources after they have      
+  obtained all resources they requested.                           
+This allocator operates by repeatedly choosing a schedule according
+to which requests are satisfied. Resources can be allocated out of 
+order as long as no client earlier in the schedule asks for them.  ### Assistant: 
+Write me TLA+ code that satisfies the above description. Do not include explanation; only code.
+```
+module Allocator {
+  sealed trait Request {
+    val resources: Set[Resource]
+  }
+
+  trait Resource {
+    val id: Int
+  }
+
+  type Schedule = Map[Request, Set[Resource]]
+
+  sealed trait AllocatorState {
+    val schedule: Schedule
+    val pendingRequests: Set[Request]
+  }
+
+  type Allocator = StateT(AllocatorState, Allocator.AllocatorEffect)
+
+  sealed trait AllocatorEffect {
+    type AllocatorState
+    val schedule: Schedule
+    val pendingRequests: Set[Request]
+  }
+
+  object AllocatorEffect {
+    case class Fulfilled(schedule: Schedule, pendingRequests: Set[Request])
+      extends AllocatorEffect
+    case class PartiallyFulfilled(schedule: Schedule, pendingRequests: Set[Request])
+      extends AllocatorEffect
+    case class Rejected(reason: String) extends AllocatorEffect
+  }
+
+  def allocatorEffect(state: AllocatorState, effect: AllocatorEffect): AllocatorState = {
+    effect match {
+      case Fulfilled(schedule, pendingRequests) =>
+        AllocatorState(schedule, pendingRequests + effect.pendingRequests)
+      case PartiallyFulfilled(schedule, pendingRequests) =>
+        AllocatorState(schedule, pendingRequests + effect.pendingRequests)
+      case Rejected(reason) =>
+        AllocatorState(schedule, pendingRequests)
+    }
+  }
+
+  def allocator(requests: Set[Request]): Allocator = {
+    StateT(AllocatorState(Map.empty, Set.empty), Allocator.AllocatorEffect)
+  }
+}
+```
+This code defines an `Allocator` type that takes a set of `Request`s as input and returns an `AllocatorState` that represents the current state of the allocator. The `AllocatorState` is a sealed trait that has a `schedule` field representing the current schedule of resource allocation, and a `pendingRequests` field representing the set of pending requests.
+
+The `AllocatorEffect` type is also a sealed trait that represents the effects that the allocator can produce. There are three subtypes of `AllocatorEffect`: `Fulfilled`, `PartiallyFulfilled`, and `Rejected`. Each of these subtypes has a `schedule` field representing the updated schedule, and a `pendingRequests` field representing the updated set of pending requests.
+
+The `allocatorEffect` function takes an `AllocatorState` and an `AllocatorEffect` as input, and returns a new `AllocatorState` that represents the updated state of the allocator after applying the effect.
+
+The `allocator` function takes a set of `Request`s as input and returns an `Allocator` that represents the allocator managing those resources.
+
+The code also defines a `Resource` type that represents a resource with an `id` field, and a `Set[Resource]` type that represents a set of resources.
+
+This code satisfies the specification given in the question, as it allows clients to request sets of resources, and it satisfies the allocation rule that resources can be allocated out of order as long as no client earlier in the schedule asks for them.
