@@ -32,15 +32,13 @@ ASSUME
 succ(n) == IF n=N THEN 1 ELSE n+1  \* successor along the ring
 
 (** Chang-Roberts algorithm written in PlusCal
-(* MASKED CODE *)
+--algorithm ring_leader {
   (* msgs[n]: messages waiting to be received by node n *)
   variable msgs = [n \in Node |-> {}];
   fair process (node \in Node)
      variables
        (* this node may be an initiator or not *)
-       initiator \in BOOLEAN,
-       state = IF initiator THEN "cand" ELSE "lost";
-  {
+(* MASKED CODE *)
        \* initiators send their own ID to their neighbor
    n0: if (initiator) {
           msgs[succ(self)] := @ \cup {Id[self]}

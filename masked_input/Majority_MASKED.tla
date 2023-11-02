@@ -26,9 +26,13 @@ VARIABLES
   cand,   \* current candidate for having a majority
   cnt     \* lower bound for the number of occurrences of the candidate so far
 
-(* MASKED CODE *)
+vars == <<seq, i, cand, cnt>>
 
-(* MASKED CODE *)
+TypeOK ==
+    /\ seq \in Seq(Value)
+    /\ i \in 1 .. Len(seq)+1
+    /\ cand \in Value
+    /\ cnt \in Nat
 
 Init ==
     /\ seq \in Seq(Value)
@@ -59,7 +63,7 @@ PositionsBefore(v,j) == { k \in 1 .. (j-1) : seq[k] = v }
 \* number of times v occurs in that prefix
 OccurrencesBefore(v,j) == Cardinality(PositionsBefore(v,j))
 \* number of times v occurs in all of the sequence
-Occurrences(x) == OccurrencesBefore(x, Len(seq)+1)
+(* MASKED CODE *)
 
 \* main correctness property: cand can be the only value that has a majority
 Correct == 

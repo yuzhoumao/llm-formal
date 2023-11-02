@@ -265,17 +265,7 @@ HaveQuorum ==
 (***************************************************************************)
 (* A node fails, losing all volatile local state.                          *)
 (***************************************************************************)
-NodeFailure(n) ==
-  /\ IsNodeUp' = [IsNodeUp EXCEPT ![n] = FALSE]
-  /\ Leader' = IF n = Leader THEN NoNode ELSE Leader
-  /\ ExecutionCounter' = [ExecutionCounter EXCEPT ![n] = MinLogIndex]
-  /\ LastVotePayload' = [LastVotePayload EXCEPT ![n] = MinLogIndex]
-  /\ CurrentLease' = [CurrentLease EXCEPT ![n] = NoCheckpointLease]
-  /\ CanTakeCheckpoint' = [CanTakeCheckpoint EXCEPT ![n] = FALSE]
-  /\ IsTakingCheckpoint' = [IsTakingCheckpoint EXCEPT ![n] = FALSE]
-  /\ UNCHANGED <<NetworkPath>>
-  /\ UNCHANGED <<ReplicatedLog>>
-  /\ UNCHANGED <<TimeoutCounter, LatestCheckpoint>>
+(* MASKED CODE *)
 
 (***************************************************************************)
 (* A node recovers. State is first rehydrated from the last checkpoint,    *)
@@ -310,7 +300,11 @@ NetworkFailure(src, dst) ==
 (***************************************************************************)
 (* A network link between two nodes recovers.                              *)
 (***************************************************************************)
-(* MASKED CODE *)
+NetworkRecovery(src, dst) ==
+  /\ NetworkPath' = [NetworkPath EXCEPT ![src, dst] = TRUE]
+  /\ UNCHANGED <<IsNodeUp>>
+  /\ UNCHANGED PaxosVars
+  /\ UNCHANGED CheckpointVars
 
 (***************************************************************************)
 (* Elects a new leader if one is not currently elected.                    *)

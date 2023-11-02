@@ -1,1 +1,1 @@
-python mmd4.py -i input/ -m masked_input/ -b 1
+python make-masked-dataset.py -i input/ -m masked_input/ -b 1

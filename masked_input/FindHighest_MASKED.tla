@@ -8,7 +8,21 @@
 EXTENDS Sequences, Naturals, Integers, TLAPS
 
 (****************************************************************************
-(* MASKED CODE *)
+--algorithm Highest {
+  variables
+    f \in Seq(Nat);
+    h = -1;
+    i = 1;
+  define {
+    max(a, b) == IF a >= b THEN a ELSE b
+  } {
+lb: while (i <= Len(f)) {
+      h := max(h, f[i]);
+      i := i + 1;
+    }
+  }
+}
+****************************************************************************)
 \* BEGIN TRANSLATION (chksum(pcal) = "31f24270" /\ chksum(tla) = "819802c6")
 VARIABLES f, h, i, pc
 
@@ -73,13 +87,7 @@ PROOF
   <1>b. TypeOK /\ UNCHANGED vars => TypeOK'
     BY DEFS TypeOK, vars
   \* The inductive case; usually requires breaking down Next into disjuncts
-  <1>c. TypeOK /\ Next => TypeOK'
-    <2>a. TypeOK /\ lb => TypeOK'
-      BY DEFS TypeOK, lb, max
-    <2>b. TypeOK /\ Terminating => TypeOK'
-      BY DEFS TypeOK, Terminating, vars
-    <2> QED BY <2>a, <2>b DEF Next
-  <1> QED BY PTL, <1>a, <1>b, <1>c DEF Spec
+(* MASKED CODE *)
 
 \* The inductive invariant; writing these is an art. You want an invariant
 \* that can be shown to be true in every state, and if it's true in all

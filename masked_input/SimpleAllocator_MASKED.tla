@@ -68,7 +68,10 @@ vars == <<unsat,alloc>>
 -------------------------------------------------------------------------
 
 (* The complete high-level specification. *)
-(* MASKED CODE *)
+SimpleAllocator == 
+  /\ Init /\ [][Next]_vars
+  /\ \A c \in Clients: WF_vars(Return(c, alloc[c]))
+  /\ \A c \in Clients: SF_vars(\E S \in SUBSET Resources: Allocate(c,S))
 
 -------------------------------------------------------------------------
 
@@ -95,10 +98,7 @@ Symmetry == Permutations(Clients) \cup Permutations(Resources)
 (* clients: resources need be returned only if the entire request has  *)
 (* been satisfied.                                                     *)
 
-SimpleAllocator2 == 
-  /\ Init /\ [][Next]_vars
-  /\ \A c \in Clients: WF_vars(unsat[c] = {} /\ Return(c, alloc[c]))
-  /\ \A c \in Clients: SF_vars(\E S \in SUBSET Resources: Allocate(c,S))
+(* MASKED CODE *)
 
 
 -------------------------------------------------------------------------

@@ -35,7 +35,8 @@ VARIABLES big,   \* The number of gallons of water in the 5 gallon jug.
 (* of parentheses.  This makes a large formula much easier to read.        *)
 (* However, it does mean that you have to be careful with your indentation.*)
 (***************************************************************************)
-(* MASKED CODE *)
+TypeOK == /\ small \in 0..3 
+          /\ big   \in 0..5
 
 
 (***************************************************************************)
@@ -70,8 +71,7 @@ FillBigJug    == /\ big' = 5
 EmptySmallJug == /\ small' = 0 
                  /\ big' = big
 
-EmptyBigJug   == /\ big' = 0 
-                 /\ small' = small
+(* MASKED CODE *)
 
 (***************************************************************************)
 (* We now consider pouring water from one jug into another.  Again, since  *)

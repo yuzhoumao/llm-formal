@@ -44,9 +44,7 @@ neighbors(n) == { m \in Node : R[m,n] }
               nbrs = neighbors(self);        {
   n0: if (self = initiator) {
          \* initiator sends first message to all its neighbors
-         inbox := multicast(inbox, self, nbrs, "m")
-      };
-  n1: while (rcvd < Cardinality(nbrs)) {
+(* MASKED CODE *)
          \* receive some message from a neighbor
          with (msg \in inbox[self],
                net = receive(inbox, self, msg)) {

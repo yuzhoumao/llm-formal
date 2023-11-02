@@ -15,8 +15,7 @@
 EXTENDS FiniteSets, Sequences, Naturals, TLC
 
 CONSTANTS
-  Clients,     \* set of all clients
-  Resources    \* set of all resources
+(* MASKED CODE *)
 
 ASSUME
   IsFiniteSet(Resources)
@@ -104,9 +103,9 @@ Next ==
         Request(c,S) \/ Allocate(c,S) \/ Return(c,S)
   \/ Schedule
 
-(* MASKED CODE *)
+vars == <<unsat,alloc,sched>>
 
-(* MASKED CODE *)
+-------------------------------------------------------------------------
 
 (***********************************************************************)
 (* Liveness assumptions:                                               *)

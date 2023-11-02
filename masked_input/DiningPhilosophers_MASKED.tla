@@ -141,13 +141,11 @@ Init == (* Global variables *)
                        fork \in 1..NP |-> [
                    
                    
-                           holder |-> IF fork = 2 THEN 1 ELSE fork,
+(* MASKED CODE *)
                    
                    
                    
-                           clean |-> FALSE
-                       ]
-                   ]
+(* MASKED CODE *)
         (* Process Philosopher *)
         /\ hungry = [self \in 1..NP |-> TRUE]
         /\ pc = [self \in ProcSet |-> "Loop"]
@@ -207,7 +205,13 @@ ShareFork(p, q) ==
 ----
 
 (*
-(* MASKED CODE *)
+TLA+ and PlusCal are dynamically-typed, but we can roll our own typechecking
+with an invariant.
+*)
+TypeOK ==
+    /\ forks \in [1..NP -> [holder: 1..NP, clean: BOOLEAN]]
+    /\ hungry \in [1..NP -> BOOLEAN]
+    /\ pc \in [1..NP -> {"Loop", "Eat", "Think"}]
 
 (* If two philosophers share a fork, they cannot eat at the same time. *)
 ExclusiveAccess ==

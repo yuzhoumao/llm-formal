@@ -53,7 +53,13 @@ Write(actor) ==
     /\ waiting' = Tail(waiting)
     /\ UNCHANGED readers
 
-(* MASKED CODE *)
+ReadOrWrite ==
+    /\ waiting /= <<>>
+    /\ writers = {}
+    /\ LET pair  == Head(waiting)
+           actor == pair[2]
+       IN CASE pair[1] = "read" -> Read(actor)
+            [] pair[1] = "write" -> Write(actor)
 
 StopActivity(actor) ==
     IF actor \in readers

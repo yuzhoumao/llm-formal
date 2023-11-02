@@ -134,13 +134,7 @@ CounterStep ==
   (* If switch A is up, the counter moves it down and increments his (or   *)
   (* her) count.  Otherwise, (s)he flips switch B.                         *)
   (*************************************************************************)
-  /\ IF switchAUp
-       THEN /\ switchAUp' = FALSE
-            /\ UNCHANGED switchBUp
-            /\ count' =  count + 1
-       ELSE /\ switchBUp' = ~switchBUp
-            /\ UNCHANGED <<switchAUp, count>>
-  /\ UNCHANGED timesSwitched
+(* MASKED CODE *)
 
 Next == 
   (*************************************************************************)
@@ -193,7 +187,12 @@ CountInvariant ==
         (* A recursive definition of the sum, over all p in OtherPrisoner, *)
         (* of timesSwitched[p].                                            *)
         (*******************************************************************)
-(* MASKED CODE *)
+        LET sum[S \in SUBSET OtherPrisoner] ==
+              IF S = {} THEN 0
+                        ELSE LET p == CHOOSE pr \in S : TRUE
+                             IN  timesSwitched[p] + sum[S \ {p}]
+        IN  sum[OtherPrisoner]
+      oneIfUp == IF switchAUp THEN 1 ELSE 0
         (*******************************************************************)
         (* Equals 1 if switch A is up, 0 otherwise.                        *)
         (*******************************************************************)
