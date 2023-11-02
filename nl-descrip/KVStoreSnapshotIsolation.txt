@@ -1,0 +1,3 @@
+A simple key-value store exhibiting snapshot isolation. If two      
+concurrent transactions write to the same key, the one merging later
+will be rejected. If they write different keys both will succeed
