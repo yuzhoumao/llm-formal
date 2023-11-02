@@ -1,0 +1,72 @@
+### Human:
+Generate a TLA+ module named "GameOfLife" with the following specifications:
+
+Extend the module Integers.
+
+Declare a CONSTANT N and a VARIABLE grid. Assume that N is a natural number.
+
+Define a tuple vars containing the grid.
+
+Define a recursive operator Sum(_, _):
+
+Calculates the sum of a function over a set.
+Define a set Pos to represent positions on the grid using tuples of coordinates.
+
+Define a predicate TypeOK:
+
+Checks the type of the grid.
+Define an operator sc[]:
+
+Determines the value of a cell, either dead or alive.
+Define an operator score(p):
+
+Computes the number of alive neighbors for a given position p.
+Define the initial state operator Init:
+
+Specifies the possible configurations of the grid.
+Define the next-state operator Next:
+
+Updates the grid based on the rules of Conway's Game of Life.
+Define the specification Spec:
+
+Combines the initial state and the next-state relation.
+### Assistant:
+```
+----------------------------- MODULE GameOfLife -----------------------------
+EXTENDS Integers
+
+CONSTANT N
+VARIABLE grid
+
+ASSUME N \in Nat
+
+vars == grid
+
+RECURSIVE Sum(_, _)
+Sum(f, S) == IF S = {} THEN 0
+                       ELSE LET x == CHOOSE x \in S : TRUE
+                            IN  f[x] + Sum(f, S \ {x})
+                            
+Pos == {<<x, y>> : x, y \in 1..N}
+TypeOK == grid \in [Pos -> BOOLEAN]
+
+sc[<<x, y>> \in (0 .. N + 1) \X
+                (0 .. N + 1)] == CASE \/ x = 0 \/ y = 0
+                                      \/ x > N \/ y > N
+                                      \/ ~grid[<<x, y>>] -> 0
+                                   [] OTHER -> 1
+
+score(p) == LET nbrs == {x \in {-1, 0, 1} \X
+                               {-1, 0, 1} : x /= <<0, 0>>}
+                points == {<<p[1] + x, p[2] + y>> : <<x, y>> \in nbrs}
+            IN Sum(sc, points)
+                   
+Init == grid \in [Pos -> BOOLEAN]
+Next == grid' = [p \in Pos |-> IF \/  (grid[p] /\ score(p) \in {2, 3})
+                                  \/ (~grid[p] /\ score(p) = 3)
+                                THEN TRUE
+                                ELSE FALSE]
+
+Spec == Init /\ [][Next]_vars
+
+=============================================================================```

@@ -1,0 +1,22 @@
+### Human: Write a TLA+ module named "MC" that extends the "ReadersWriters" module and imports "TLC". Define a constant "n" with a value of 3. Include the following violated invariants:
+Cardinality of readers is less than n.
+Cardinality of WaitingToWrite is less than n.
+If WaitingToRead is non-empty, then WaitingToWrite is empty.
+If WaitingToWrite is non-empty, then WaitingToRead is empty.
+### Assistant:
+```
+
+---- MODULE MC ----
+
+EXTENDS ReadersWriters, TLC
+
+n == 3
+
+\* The following invariants are all violated:
+\* - Cardinality(readers) < n
+\* - Cardinality(WaitingToWrite) < n
+\* - WaitingToRead /= {} => WaitingToWrite = {}
+\* - WaitingToWrite /= {} => WaitingToRead = {}
+
+===================
+```

@@ -1,0 +1,41 @@
+### Human: Give the TLA+ proof of original RealTime specification from the TLA toolkit 
+### Assistant:
+```
+---- MODULE RealTime ----
+(******************************************************************************)
+(* This is based on the original RealTime specification from the TLA toolkit, *)
+(* but I removed the lifeness part; that is, the NonZeno part from RTnow.     *)
+(*                                                                            *)
+(* Copyright (c) Leslie Lamport, 2002, modified by Steffen Zschaler 2004      *)
+(******************************************************************************)
+EXTENDS Reals
+
+(******************************************************************************)
+(* Variables:                                                                 *)
+(*                                                                            *)
+(* now - the current system time.                                             *)
+(******************************************************************************)
+VARIABLE now
+
+\* A helper definition
+LOCAL NowNext(v) == /\ now' \in {r \in Real : r > now}
+                    /\ UNCHANGED v
+
+(* RTnow(v) asserts two things:                                               *)
+(*  a) time never runs backward,                                              *)
+(*  b) steps changing now do not change any other variable in v, and vice     *)
+(*     versa.                                                                 *)
+(*                                                                            *)
+(* RTnow(v) is a safety property, that is, it allows systems in which time    *)
+(* stops altogether. This is useful for certain proofs. If one needs to       *)
+(* explicitly exclude this possibility, one conjoins NZ(v), which adds the    *)
+(* required fairness constraints.                                             *)
+RTnow(v) == /\ now \in Real
+            /\ [][NowNext(v)]_now
+
+(* The so called NonZeno condition, which asserts that time will eventually   *)
+(* exceed every bound. This liveness constraint is only required under certain*)
+(* circumstances.                                                             *)
+NZ(v) == \A r \in Real : WF_now(NowNext(v) /\ (now'>r))
+====
+```

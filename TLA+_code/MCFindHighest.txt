@@ -1,0 +1,23 @@
+### Human:Generate a TLA+ module named "MCFindHighest". It should:
+
+Extend the module FindHighest.
+Define constants MaxLength and MaxNat and assume both of them belong to natural numbers.
+Define a constraint MCConstraint which ensures the length of function f is less than or equal to MaxLength.
+Define MCNat to represent a sequence from 0 to MaxNat.
+Define a function MCSeq(S) that generates a union of sequences of various lengths, mapping to a set S.                                  
+### Assistant:
+```
+--------------------------- MODULE MCFindHighest ----------------------------
+EXTENDS FindHighest
+
+CONSTANTS MaxLength, MaxNat
+ASSUME MaxLength \in Nat
+ASSUME MaxNat \in Nat
+
+MCConstraint == Len(f) <= MaxLength
+MCNat == 0..MaxNat
+MCSeq(S) == UNION {[1..n -> S] : n \in Nat}
+
+=============================================================================
+
+```

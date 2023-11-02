@@ -1,0 +1,19 @@
+### Human:Create a TLA+ module named "MCLeastCircularSubstring" that extends "Naturals" and "LeastCircularSubstring". This module should define:
+
+- Constants for the size of the character set (`CharSetSize`) and the maximum length of a string (`MaxStringLength`).
+- Define a set `ZSeqNat` which represents the sequence numbers from 0 to `MaxStringLength`.
+- Define a set `MCCharacterSet` which represents the character set starting from 0 to (`CharSetSize - 1`).                                               
+### Assistant:
+```
+--------------------- MODULE MCLeastCircularSubstring -----------------------
+EXTENDS Naturals, LeastCircularSubstring
+
+CONSTANTS CharSetSize, MaxStringLength
+
+ZSeqNat == 0 .. MaxStringLength
+
+MCCharacterSet == 0 .. (CharSetSize - 1)
+
+=============================================================================
+
+```
