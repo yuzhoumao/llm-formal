@@ -1,0 +1,5 @@
+Next == 
+  LET es == (UNION board) \symdiff Pos
+      ps == {e \in Pos: e \notin UNION board}
+      us == UNION {update(e, es) : e \in ps}
+  IN  us /= {} /\ board' \in us

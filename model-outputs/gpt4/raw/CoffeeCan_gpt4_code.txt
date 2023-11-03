@@ -1,0 +1,1 @@
+EventuallyTerminates == <>[BeanCount = 1]_can

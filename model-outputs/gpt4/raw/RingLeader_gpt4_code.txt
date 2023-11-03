@@ -1,0 +1,8 @@
+Safety == /\ \A n \in Node : 
+              (state[n] = "won") => 
+                /\ initiator[n] 
+                /\ \A m \in Node \ {n} : state[m] = "lost"
+           /\ \A n \in Node :
+                (state[n] = "cand") =>
+                   /\ initiator[n]
+                   /\ \E m \in Node : Id[m] < Id[n] => state[m] = "lost"

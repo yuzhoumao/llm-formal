@@ -1,0 +1,5 @@
+IsHoldingBothForks(p) == /\ forks[LeftFork(p)].holder = p
+                        /\ forks[RightFork(p)].holder = p
+
+BothForksAreClean(p) == /\ forks[LeftFork(p)].clean
+                        /\ forks[RightFork(p)].clean

@@ -1,0 +1,8 @@
+TypeInvariant == /\ Location \in [Cars -> Positions]
+                 /\ WaitingBeforeBridge \in Seq(Cars)
+
+Safety == \A c1, c2 \in Cars :
+              /\ Location[c1] \in Bridge
+              /\ Location[c2] \in Bridge
+              /\ c1 /= c2
+              => Location[c1] /= Location[c2]

@@ -1,0 +1,3 @@
+InfOftenSatisfied ==
+  \A c \in Clients :
+    <>[]((unsat[c] = {}) \/ (unsat[c] \subseteq alloc[c]))

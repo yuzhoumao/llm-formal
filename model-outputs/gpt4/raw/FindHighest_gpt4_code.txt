@@ -1,0 +1,2 @@
+ THEOREM SpecOK == Spec => []Correctness
+BY DEF Spec, Correctness

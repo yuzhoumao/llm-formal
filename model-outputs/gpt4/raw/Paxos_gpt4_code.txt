@@ -1,0 +1,9 @@
+Phase2b(a) == 
+  /\ \E m \in msgs : 
+       /\ m.type = "2a" 
+       /\ m.bal >= maxBal[a]
+       /\ maxBal' = [maxBal EXCEPT ![a] = m.bal]
+       /\ maxVBal' = [maxVBal EXCEPT ![a] = m.bal]
+       /\ maxVal' = [maxVal EXCEPT ![a] = m.val]
+       /\ Send([type |-> "2b", acc |-> a, bal |-> m.bal, val |-> m.val])
+       /\ UNCHANGED <<msgs>>

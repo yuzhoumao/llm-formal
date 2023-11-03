@@ -1,0 +1,5 @@
+L9 == 
+  /\ pc = "L9"
+  /\ i' = f[i]
+  /\ pc' = "L6"
+  /\ UNCHANGED << b, n, f, j, k >>

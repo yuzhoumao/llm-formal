@@ -1,0 +1,8 @@
+Add(t, k, v) ==
+/\ t \in tx
+/\ k \notin written[t]
+/\ v \in Val
+/\ snapshotStore[t][k] = NoVal
+/\ snapshotStore' = [snapshotStore EXCEPT ![t][k] = v]
+/\ written' = [written EXCEPT ![t] = @ \cup {k}]
+/\ UNCHANGED <<tx, missed, store>>

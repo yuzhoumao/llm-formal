@@ -1,0 +1,3 @@
+Next == \/ \E c \in Clients, S \in SUBSET Resources : Request(c,S)
+         \/ \E c \in Clients, S \in SUBSET Resources : Allocate(c,S)
+         \/ \E c \in Clients, S \in SUBSET Resources : Return(c,S)

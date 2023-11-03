@@ -1,0 +1,10 @@
+ClassicAccepted ==
+  /\ UNCHANGED<<messages, maxBallot, maxVBallot, maxValue, cValue>>
+  /\ \E a \in Replicas, m \in p2aMessages, b \in ClassicBallots :
+     /\ m.ballot = b
+     /\ maxBallot[a] < m.ballot
+     /\ \E v \in Values :
+        /\ SendMessage([type |-> "P2b", ballot |-> b, acceptor |-> a, value |-> v])
+        /\ maxBallot' = [maxBallot EXCEPT ![a] = b]
+        /\ maxVBallot' = [maxVBallot EXCEPT ![a] = b]
+        /\ maxValue' = [maxValue EXCEPT ![a] = v]

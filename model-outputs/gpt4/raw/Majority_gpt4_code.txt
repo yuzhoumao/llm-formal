@@ -1,0 +1,3 @@
+VARIABLES seq, i, cand, cnt
+
+vars == << seq, i, cand, cnt >>

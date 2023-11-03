@@ -1,0 +1,4 @@
+TryWrite(actor) ==
+/\ actor \notin WaitingToWrite
+/\ waiting' = Append(waiting, <<"write", actor>>)
+/\ UNCHANGED <<readers, writers>>
