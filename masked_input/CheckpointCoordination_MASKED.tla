@@ -90,7 +90,7 @@ MinLogIndex == 1
 (***************************************************************************)
 (* A blank log.                                                            *)
 (***************************************************************************)
-(* MASKED CODE *)
+BlankLog == [i \in LogIndex |-> NoNode]
 
 (***************************************************************************)
 (* The set of all log checkpoints.                                         *)
@@ -103,11 +103,8 @@ LogCheckpoint == [
 (***************************************************************************)
 (* The set of all log checkpoint leases.                                   *)
 (***************************************************************************)
-CheckpointLease == [
-  node    : Node,     \* The node to which the checkpoint lease applies
-  counter : LogIndex  \* The log index at which the lease was issued
-]
-
+(* MASKED CODE *)
+                                                                                                                                               
 (***************************************************************************)
 (* Value indicating no checkpoint lease.                                   *)
 (***************************************************************************)

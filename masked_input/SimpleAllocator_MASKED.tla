@@ -46,7 +46,10 @@ Request(c,S) ==
 
 (* Allocation of a set of available resources to a client that         *)
 (* requested them (the entire request does not have to be filled).     *)
-(* MASKED CODE *)
+Allocate(c,S) ==
+  /\ S # {} /\ S \subseteq available \cap unsat[c]
+  /\ alloc' = [alloc EXCEPT ![c] = @ \cup S]
+  /\ unsat' = [unsat EXCEPT ![c] = @ \ S]
 
 (* Client c returns a set of resources that it holds. It may do so     *)
 (* even before its full request has been honored.                      *)
@@ -56,10 +59,8 @@ Return(c,S) ==
   /\ UNCHANGED unsat
 
 (* The next-state relation. *)
-Next == 
-  \E c \in Clients, S \in SUBSET Resources :
-     Request(c,S) \/ Allocate(c,S) \/ Return(c,S)
-
+(* MASKED CODE *)
+                                                                                               
 vars == <<unsat,alloc>>
 
 -------------------------------------------------------------------------

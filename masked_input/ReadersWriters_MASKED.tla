@@ -37,11 +37,8 @@ TryRead(actor) ==
     /\ waiting' = Append(waiting, <<"read", actor>>)
     /\ UNCHANGED <<readers, writers>>
 
-TryWrite(actor) ==
-    /\ actor \notin WaitingToWrite
-    /\ waiting' = Append(waiting, <<"write", actor>>)
-    /\ UNCHANGED <<readers, writers>>
-
+(* MASKED CODE *)
+                                                                                                                               
 Read(actor) ==
     /\ readers' = readers \union {actor}
     /\ waiting' = Tail(waiting)
@@ -70,7 +67,7 @@ StopActivity(actor) ==
 
 Stop == \E actor \in readers \cup writers : StopActivity(actor)
 
-(* MASKED CODE *)
+---------------------------------------------------------------------------
 
 (*****************)
 (* Specification *)

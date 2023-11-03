@@ -149,20 +149,16 @@ Next ==
   \/ CounterStep 
   \/ \E i \in OtherPrisoner : NonCounterStep(i)
 
+Fairness == 
+  (*************************************************************************)
+  (* This asserts that every prisoner is brought into the room infinitely  *)
+  (* often.                                                                *)
+  (*************************************************************************)
+  /\ WF_vars(CounterStep)
+  /\ \A i \in OtherPrisoner : WF_vars(NonCounterStep(i))
+
 (* MASKED CODE *)
-
-Spec == Init /\ [][Next]_vars /\ Fairness
------------------------------------------------------------------------------
-Safety == 
-  (*************************************************************************)
-  (* This formula asserts that safety condition: that Done true implies    *)
-  (* that every prisoner other than the counter has flipped switch A at    *)
-  (* least once--and hence has been in the room at least once.  Since the  *)
-  (* counter increments the count only when in the room, and Done implies  *)
-  (* count > 0, it also implies that the counter has been in the room.     *)
-  (*************************************************************************)
-  [](Done => (\A i \in Prisoner \ {Counter} : timesSwitched[i] > 0))
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 Liveness == <>Done
   (*************************************************************************)
   (* This asserts that Done is eventually true, so the prisoners are       *)

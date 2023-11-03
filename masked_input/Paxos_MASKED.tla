@@ -79,7 +79,7 @@ Init == /\ maxBal = [a \in Acceptor |-> -1]
 (* The actions.  We begin with the subaction (an action that will be used  *)
 (* to define the actions that make up the next-state action.               *)
 (***************************************************************************)
-(* MASKED CODE *)
+Send(m) == msgs' = msgs \cup {m}
 
 
 (***************************************************************************)
@@ -149,14 +149,8 @@ Phase2a(b, v) ==
 (* phase 2b message announcing its vote.  It also sets maxBal[a] to the    *)
 (* message's.  ballot number                                               *)
 (***************************************************************************)
-Phase2b(a) == \E m \in msgs : /\ m.type = "2a"
-                              /\ m.bal \geq maxBal[a]
-                              /\ maxBal' = [maxBal EXCEPT ![a] = m.bal] 
-                              /\ maxVBal' = [maxVBal EXCEPT ![a] = m.bal] 
-                              /\ maxVal' = [maxVal EXCEPT ![a] = m.val]
-                              /\ Send([type |-> "2b", acc |-> a,
-                                       bal |-> m.bal, val |-> m.val]) 
-
+(* MASKED CODE *)
+                                                                                                                                                                                                                                                                                                                                                                                                                          
 (***************************************************************************)
 (* In an implementation, there will be learner processes that learn from   *)
 (* the phase 2b messages if a value has been chosen.  The learners are     *)

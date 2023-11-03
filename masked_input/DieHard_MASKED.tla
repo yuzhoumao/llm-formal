@@ -44,7 +44,8 @@ TypeOK == /\ small \in 0..3
 (* values of the variables.  I like to name this predicate Init, but the   *)
 (* name doesn't matter.                                                    *)
 (***************************************************************************)
-(* MASKED CODE *)
+Init == /\ big = 0 
+        /\ small = 0
 
 (***************************************************************************)
 (* Now we define the actions that our hero can perform.  There are three   *)
@@ -123,7 +124,7 @@ Spec == Init /\ [][Next]_<<big, small>>
 (* solved their problem when they reach a state with big = 4.  So, we      *)
 (* define NotSolved to be the predicate asserting that big # 4.            *)
 (***************************************************************************)
-NotSolved == big # 4
+(* MASKED CODE *)
 
 (***************************************************************************)
 (* We find a solution by having TLC check if NotSolved is an invariant,    *)

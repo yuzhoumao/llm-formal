@@ -45,7 +45,7 @@ PermSeqs(S) ==
 
 (* Remove element at index i from a sequence.                          *)
 (* Assumes that i \in 1..Len(seq)                                      *)
-(* MASKED CODE *)
+Drop(seq,i) == SubSeq(seq, 1, i-1) \circ SubSeq(seq, i+1, Len(seq))
 
 (* Resources are available iff they have not been allocated. *)
 available == Resources \ (UNION {alloc[c] : c \in Clients})
@@ -156,9 +156,8 @@ ClientsWillReturn ==
 ClientsWillObtain ==
   \A c \in Clients, r \in Resources : r \in unsat[c] ~> r \in alloc[c]
 
-InfOftenSatisfied == 
-  \A c \in Clients : []<>(unsat[c] = {})
-
+(* MASKED CODE *)
+                                         
 (* Used for symmetry reduction with TLC.
    Note: because of the schedule sequence, the specification is no
    longer symmetric with respect to the processes!

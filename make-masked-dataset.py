@@ -3,7 +3,7 @@ import argparse
 import random
 
 # Add a list of keywords to exclude from masking
-EXCLUDE_KEYWORDS = ['EXTENDS']#, 'CONSTANTS', 'VARIABLES', 'ASSUME']
+EXCLUDE_KEYWORDS = ['EXTENDS', 'CONSTANTS', 'CONSTANT', 'VARIABLES', 'VARIABLE', 'ASSUME']
 
 def mask_code_blocks(input_dir, masked_dir, blocks_to_mask):
     if not os.path.exists(masked_dir):
@@ -39,8 +39,12 @@ def mask_code_blocks(input_dir, masked_dir, blocks_to_mask):
                     # Check if line contains excluded keywords
                     contains_exclude_keywords = any(keyword in line for keyword in EXCLUDE_KEYWORDS)
 
+                    # Ignore divider lines and lines that are not the start of a code block
+                    if line.strip() and (len(set(line.strip())) == 1 or contains_exclude_keywords):
+                        continue
+
                     # Determine if this is the start of a new code block
-                    if not in_comment_block and not standalone_comment and not contains_exclude_keywords and line.strip() and block_start is None:
+                    if not in_comment_block and not standalone_comment and line.strip() and block_start is None:
                         block_start = i
                         in_code_block = True
 
@@ -62,7 +66,7 @@ def mask_code_blocks(input_dir, masked_dir, blocks_to_mask):
                 for start, end in blocks_chosen_to_mask:
                     for j in range(start, end + 1):
                         if not any(keyword in masked_content[j] for keyword in EXCLUDE_KEYWORDS):
-                            masked_content[j] = ""  # Clear the line
+                            masked_content[j] = " " * len(masked_content[j])  # Replace with spaces
 
                     # Insert the "MASKED CODE" tag if the entire block has been cleared
                     if start < len(masked_content) and not any(masked_content[j].strip() for j in range(start, end + 1)):

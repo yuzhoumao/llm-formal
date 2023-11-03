@@ -15,7 +15,7 @@ Klotski == {{<<0, 0>>, <<0, 1>>},
             
 KlotskiGoal == {<<1, 3>>, <<1, 4>>, <<2, 3>>, <<2, 4>>} \notin board
             
-(* MASKED CODE *)
+ChooseOne(S, P(_)) == CHOOSE x \in S : P(x) /\ \A y \in S : P(y) => y = x
 
 TypeOK == board \in SUBSET Piece
 
@@ -49,8 +49,7 @@ update(e, es) == LET dirs  == dir(e, es)
 
 Init == board = Klotski
         
-Next == LET empty == Pos \ UNION board
-        IN  \E e \in empty : board' \in update(e, empty)
-
+(* MASKED CODE *)
+                                                         
 =============================================================================
 

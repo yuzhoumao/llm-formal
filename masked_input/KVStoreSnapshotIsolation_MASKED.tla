@@ -51,13 +51,8 @@ OpenTx(t) ==    \* Open a new transaction.
     /\ snapshotStore' = [snapshotStore EXCEPT ![t] = store]
     /\ UNCHANGED <<written, missed, store>>
 
-Add(t, k, v) == \* Using transaction t, add value v to the store under key k.
-    /\ t \in tx
-    /\ snapshotStore[t][k] = NoVal
-    /\ snapshotStore' = [snapshotStore EXCEPT ![t][k] = v]
-    /\ written' = [written EXCEPT ![t] = @ \cup {k}]
-    /\ UNCHANGED <<tx, missed, store>>
-    
+(* MASKED CODE *)
+                                                                                                                                                                                                              
 Update(t, k, v) ==  \* Using transaction t, update the value associated with key k to v.
     /\ t \in tx
     /\ snapshotStore[t][k] \notin {NoVal, v}
@@ -72,7 +67,13 @@ Remove(t, k) == \* Using transaction t, remove key k from the store.
     /\ written' = [written EXCEPT ![t] = @ \cup {k}]
     /\ UNCHANGED <<tx, missed, store>>
     
-(* MASKED CODE *)
+RollbackTx(t) ==    \* Close the transaction without merging writes into store.
+    /\ t \in tx
+    /\ tx' = tx \ {t}
+    /\ snapshotStore' = [snapshotStore EXCEPT ![t] = [k \in Key |-> NoVal]]
+    /\ written' = [written EXCEPT ![t] = {}]
+    /\ missed' = [missed EXCEPT ![t] = {}]
+    /\ UNCHANGED store
 
 CloseTx(t) ==   \* Close transaction t, merging writes into store.
     /\ t \in tx

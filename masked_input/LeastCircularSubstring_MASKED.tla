@@ -9,7 +9,7 @@ EXTENDS Integers, ZSequences
 
 CONSTANTS CharacterSet
 
-(* MASKED CODE *)
+ASSUME CharacterSet \subseteq Nat
 
 (****************************************************************************
 --algorithm LeastCircularSubstring
@@ -93,11 +93,8 @@ L8 == /\ pc = "L8"
       /\ pc' = "L9"
       /\ UNCHANGED << b, n, f, i, j >>
 
-L9 == /\ pc = "L9"
-      /\ i' = f[i]
-      /\ pc' = "L6"
-      /\ UNCHANGED << b, n, f, j, k >>
-
+(* MASKED CODE *)
+                                                                              
 L10 == /\ pc = "L10"
        /\ IF b[j % n] /= b[(k + i + 1) % n] /\ i = nil
              THEN /\ pc' = "L11"

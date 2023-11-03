@@ -123,14 +123,11 @@ RightFork(p) == IF p = NP THEN 1 ELSE p + 1
 LeftPhilosopher(p) == IF p = 1 THEN NP ELSE p - 1
 RightPhilosopher(p) == IF p = NP THEN 1 ELSE p + 1
 
-IsHoldingBothForks(p) ==
-    forks[LeftFork(p)].holder = p /\ forks[RightFork(p)].holder = p
-BothForksAreClean(p) ==
-    forks[LeftFork(p)].clean /\ forks[RightFork(p)].clean
-
+(* MASKED CODE *)
+                                                                                                                                                      
 CanEat(p) == IsHoldingBothForks(p) /\ BothForksAreClean(p)
 
-(* MASKED CODE *)
+VARIABLE hungry
 
 vars == << forks, pc, hungry >>
 

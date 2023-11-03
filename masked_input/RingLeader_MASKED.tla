@@ -73,7 +73,11 @@ vars == << msgs, pc, initiator, state >>
 ProcSet == (Node)
 
 Init == (* Global variables *)
-(* MASKED CODE *)
+        /\ msgs = [n \in Node |-> {}]
+        (* Process node *)
+        /\ initiator \in [Node -> BOOLEAN]
+        /\ state = [self \in Node |-> IF initiator[self] THEN "cand" ELSE "lost"]
+        /\ pc = [self \in ProcSet |-> "n0"]
 
 n0(self) == /\ pc[self] = "n0"
             /\ IF initiator[self]
@@ -127,13 +131,8 @@ TypeOK ==
 (* Safety property: when node n wins the election, it is the initiator     *)
 (* with the smallest ID, and all other nodes know that they lost.          *)
 (***************************************************************************)
-Correctness ==
-  \A n \in Node : state[n] = "won" =>
-     /\ initiator[n]
-     /\ \A m \in Node \ {n} : 
-           /\ state[m] = "lost"
-           /\ initiator[m] => Id[m] > Id[n]
-
+(* MASKED CODE *)
+                                                                                                                                                                      
 Liveness == (\E n \in Node : state[n] = "cand") => <>(\E n \in Node : state[n] = "won")
 =============================================================================
 \* Modification History

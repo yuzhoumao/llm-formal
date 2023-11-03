@@ -13,9 +13,8 @@ CONSTANTS CarsRight, CarsLeft, Bridge, Positions
 VARIABLES Location, WaitingBeforeBridge
 vars == <<Location, WaitingBeforeBridge>>
 
-StartPos == CHOOSE min \in Positions : \A p \in Positions : min <= p
-EndPos   == CHOOSE max \in Positions : \A p \in Positions : max >= p
-
+(* MASKED CODE *)
+                                                                     
 StartBridge == CHOOSE min \in Bridge : \A e \in Bridge : min <= e
 EndBridge   == CHOOSE max \in Bridge : \A e \in Bridge : max >= e
 
@@ -30,7 +29,9 @@ SeqFromSet(S) ==
   ELSE LET x == CHOOSE x \in S : TRUE
        IN  << x >> \o SeqFromSet(S \ {x})
 
-(* MASKED CODE *)
+Cars == CarsRight \union CarsLeft
+CarsInBridge == { c \in Cars : Location[c] \in Bridge }
+CarsBeforeBridge == { car \in CarsRight : EndPos - EndBridge = 1 } \cup { car \in CarsLeft : StartBridge - StartPos = 1 }
 
 RMove(pos) == IF pos > StartPos THEN pos - 1 ELSE EndPos
 LMove(pos) == IF pos < EndPos THEN pos + 1 ELSE StartPos

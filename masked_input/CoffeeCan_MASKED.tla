@@ -90,7 +90,7 @@ Next ==
 MonotonicDecrease == [][BeanCount' < BeanCount]_can
 
 \* Liveness property: we eventually end up with one bean left
-EventuallyTerminates == <>(ENABLED Termination)
+(* MASKED CODE *)
 
 \* Loop invariant: every step preserves white bean count mod 2
 LoopInvariant == [][can.white % 2 = 0 <=> can'.white % 2 = 0]_can
@@ -105,7 +105,10 @@ TerminationHypothesis ==
 \* Start out in a state defined by the Init operator and every step is one
 \* defined by the Next operator. Assume weak fairness so the system can't
 \* stutter indefinitely: we eventually take some beans out of the can.
-(* MASKED CODE *)
+Spec ==
+    /\ Init
+    /\ [][Next]_can
+    /\ WF_can(Next)
 
 \* What we want to show: that if our system follows the rules set out by the
 \* Spec operator, then all our properties and assumptions will be satisfied.

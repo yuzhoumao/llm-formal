@@ -6,9 +6,8 @@
 EXTENDS Naturals, FiniteSets, Relation, TLC
 
 CONSTANTS Node,      \* set of nodes
-          initiator, \* single initiator, will be the root of the tree
-          R          \* neighborhood relation, represented as a Boolean function over nodes 
-
+(* MASKED CODE *)
+                                                                                             
 ASSUME /\ initiator \in Node
        /\ R \in [Node \X Node -> BOOLEAN]
        \* No edge from a node to itself (self-loops).
@@ -129,7 +128,15 @@ n1(self) == /\ pc[self] = "n1"
                        /\ UNCHANGED << inbox, parent, children, rcvd >>
             /\ nbrs' = nbrs
 
-(* MASKED CODE *)
+n2(self) == /\ pc[self] = "n2"
+            /\ IF self # initiator
+                  THEN /\ Assert((parent[self] \in nbrs[self]), 
+                                 "Failure of assertion at line 65, column 10.")
+                       /\ inbox' = send(inbox, self, parent[self], "c")
+                  ELSE /\ TRUE
+                       /\ inbox' = inbox
+            /\ pc' = [pc EXCEPT ![self] = "Done"]
+            /\ UNCHANGED << parent, children, rcvd, nbrs >>
 
 node(self) == n0(self) \/ n1(self) \/ n2(self)
 

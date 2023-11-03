@@ -116,10 +116,8 @@ ClassicAccept ==
 
     Same as in Paxos.
 *)
-ClassicAccepted ==
-    /\ UNCHANGED<<cValue>>
-    /\ PaxosAccepted
-
+(* MASKED CODE *)
+                                                
 (*
     Consensus is achieved when a majority of acceptors accept the same ballot number.
 
@@ -139,7 +137,12 @@ FastTypeOK == /\ PaxosTypeOK
 FastInit == /\ PaxosInit
             /\ cValue = none
 
-(* MASKED CODE *)
+FastNext == \/ FastAny
+            \/ FastPropose
+            \/ FastDecide
+            \/ ClassicAccept
+            \/ ClassicAccepted
+            \/ ClassicDecide
 
 FastSpec == /\ FastInit
             /\ [][FastNext]_<<messages, decision, maxBallot, maxVBallot, maxValue, cValue>>
