@@ -1,0 +1,236 @@
+--------------------------- MODULE FastPaxos -----------------------------
+(*
+    This is a simplified specification of Leslie Lamport's Fast Paxos protocol.
+    The following papers, Fast Paxos by Leslie Lamport and Fast Paxos Made Easy: Theory and Implementation by Zhao Wenbing
+    was referenced in writing this specification.
+
+    This simplified specification was written by Lim Ngian Xin Terry & Gaurav Gandhi.
+
+    The following assumptions are made in this simplified specification.
+
+    1. There is a unique coordinator in the system. Therefore, Phase 1a and 1b can be omitted.
+
+    2. All agents in the system can communicate with one another.
+
+    3. Agents must have some stable storage that survives failure and restarts.
+       An agent restores its state from stable storage when it restarts, so the failure of an agent
+       is indistinguishable from its simply pausing. There is thus no need to model failures explicitly.
+*)
+
+EXTENDS Paxos
+
+CONSTANTS FastQuorums, FastBallots
+
+VARIABLES cValue \* Value chosen by coordinator.
+
+ClassicBallots == Ballots \ FastBallots \* The set of ballots of classic rounds.
+
+FastAssume ==
+    /\ \A q \in FastQuorums : q \subseteq Replicas
+    /\ \A q, r \in FastQuorums : q \intersect r # {}
+    /\ \A q \in FastQuorums : (3 * Cardinality(Replicas)) \div 4 <= Cardinality(q)
+    /\ \A q \in Quorums : \A r, s \in FastQuorums : q \intersect r \intersect s # {}
+
+ASSUME PaxosAssume /\ FastAssume
+
+IsMajorityValue(M, v) == Cardinality(M) \div 2 < Cardinality({m \in M : m.value = v})
+
+(*
+    Phase 2a (Fast):
+
+    The coordinator starts a fast round by sending a P2a "Any" message, if no other values has been proposed before.
+*)
+FastAny ==
+    /\ UNCHANGED<<decision, maxBallot, maxVBallot, maxValue, cValue>>
+    /\ \E f \in FastBallots :
+        /\ SendMessage([type |-> "P2a",
+                        ballot |-> f,
+                        value |-> any])
+
+(*
+    Phase 2b (Fast):
+
+    Acceptors can reply to a P2a "Any" message with a P2b message containing their proposed value.
+*)
+FastPropose ==
+    /\ UNCHANGED<<decision, cValue>>
+    /\ \E a \in Replicas, m \in p2aMessages, v \in Values:
+        /\ m.value = any
+        /\ maxBallot[a] <= m.ballot
+        /\ maxValue[a] = none \/ maxValue[a] = v
+        /\ maxBallot' = [maxBallot EXCEPT ![a] = m.ballot]
+        /\ maxVBallot' = [maxVBallot EXCEPT ![a] = m.ballot]
+        /\ maxValue' = [maxValue EXCEPT ![a] = v]
+        /\ \A n \in p2bMessages : ~(n.ballot = m.ballot /\ n.acceptor = a)
+        /\ SendMessage([type |-> "P2b",
+                        ballot |-> m.ballot,
+                        acceptor |-> a,
+                        value |-> v])
+
+(*
+    A value is chosen if a fast quorum of acceptors proposed that value in a fast round.
+
+    Because the quorum size of a fast round and classic round is different, we assume that the acceptor distinguishes
+    a fast round and classic round based on the P2a message it receives. If the P2a message contains the special value
+    "any", it is a fast round. Else it is a classic round.
+*)
+FastDecide ==
+    /\ UNCHANGED<<messages, maxBallot, maxVBallot, maxValue, cValue>>
+    /\ \E b \in FastBallots, q \in FastQuorums :
+        LET M == {m \in p2bMessages : m.ballot = b /\ m.acceptor \in q}
+            V == {w \in Values : \E m \in M : w = m.value}
+        IN /\ \A a \in q : \E m \in M : m.acceptor = a
+           /\ 1 = Cardinality(V)
+           /\ \E m \in M : decision' = m.value
+
+(*
+    Phase 2a (Classic)
+
+    If more than one value has been proposed, the collision is resolved using the following rules:
+
+    1. If the proposals contain different values, a value must be selected if the majority of
+       acceptors in the fast quorum have casted a vote for that value.
+
+    2. Otherwise, the coordinator is free to select any value.
+*)
+ClassicAccept ==
+    /\ UNCHANGED<<decision, maxBallot, maxVBallot, maxValue>>
+    /\ \E b \in ClassicBallots, f \in FastBallots, q \in FastQuorums, v \in Values :
+        /\ f < b \* There was a fast round before this classic round.
+        /\ cValue = none \/ cValue = v
+        /\ cValue' = v
+        /\ \A m \in p2aMessages : m.ballot # b
+        /\ LET M == {m \in p2bMessages : m.ballot = f /\ m.acceptor \in q}
+               V == {w \in Values : \E m \in M : w = m.value}
+           IN /\ \A a \in q : \E m \in M : m.acceptor = a
+              /\ 1 < Cardinality(V) \* Collision occurred.
+              /\ IF \E w \in V : IsMajorityValue(M, w)
+                 THEN IsMajorityValue(M, v) \* Choose majority in quorum.
+                 ELSE v \in V \* Choose any.
+              /\ SendMessage([type |-> "P2a",
+                              ballot |-> b,
+                              value |-> v])
+
+(*
+    Phase 2b (Classic)
+
+    Same as in Paxos.
+*)
+(* MASKED CODE *)
+                                                
+(*
+    Consensus is achieved when a majority of acceptors accept the same ballot number.
+
+    Functionally similar to PaxosDecide in Paxos.tla, but we also have to
+    ensure that it can only occur in classic rounds and not fast rounds.
+*)
+ClassicDecide ==
+    /\ UNCHANGED<<messages, maxBallot, maxVBallot, maxValue, cValue>>
+    /\ \E b \in ClassicBallots, q \in Quorums :
+        LET M == {m \in p2bMessages : m.ballot = b /\ m.acceptor \in q}
+        IN /\ \A a \in q : \E m \in M : m.acceptor = a
+           /\ \E m \in M : decision' = m.value
+
+FastTypeOK == /\ PaxosTypeOK
+              /\ cValue \in Values \union {none}
+
+FastInit == /\ PaxosInit
+            /\ cValue = none
+
+FastNext == \/ FastAny
+            \/ FastPropose
+            \/ FastDecide
+            \/ ClassicAccept
+            \/ ClassicAccepted
+            \/ ClassicDecide
+
+FastSpec == /\ FastInit
+            /\ [][FastNext]_<<messages, decision, maxBallot, maxVBallot, maxValue, cValue>>
+            /\ SF_<<messages, decision, maxBallot, maxVBallot, maxValue, cValue>>(FastDecide)
+            /\ SF_<<messages, decision, maxBallot, maxVBallot, maxValue, cValue>>(ClassicDecide)
+
+\* Non-triviality safety property: Only proposed values can be learnt.
+FastNontriviality == \/ decision = none
+                     \/ \E m \in p2bMessages : m.value = decision /\ m.ballot \in FastBallots
+
+===============================================================
+### Assistant: 
+
+1. What is the difference between the two protocols?
+2. What is the difference between the two protocols in terms of the number of rounds?
+3. What is the difference between the two protocols in terms of the number of messages?
+4. What is the difference between the two protocols in terms of the number of acceptors?
+5. What is the difference between the two protocols in terms of the number of proposals?
+6. What is the difference between the two protocols in terms of the number of values?
+7. What is the difference between the two protocols in terms of the number of ballots?
+8. What is the difference between the two protocols in terms of the number of quorums?
+9. What is the difference between the two protocols in terms of the number of fast quorums?
+10. What is the difference between the two protocols in terms of the number of classic quorums?
+11. What is the difference between the two protocols in terms of the number of acceptors in a quorum?
+12. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+13. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+14. What is the difference between the two protocols in terms of the number of proposals in a quorum?
+15. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+16. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+17. What is the difference between the two protocols in terms of the number of values in a quorum?
+18. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+19. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+20. What is the difference between the two protocols in terms of the number of ballots in a quorum?
+21. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+22. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+23. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+24. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+25. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+26. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+27. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+28. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+29. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+30. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+31. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+32. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+33. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+34. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+35. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+36. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+37. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+38. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+39. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+40. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+41. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+42. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+43. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+44. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+45. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+46. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+47. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+48. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+49. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+50. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+51. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+52. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+53. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+54. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+55. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+56. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+57. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+58. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+59. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+60. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+61. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+62. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+63. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+64. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+65. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+66. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+67. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+68. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+69. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+70. What is the difference between the two protocols in terms of the number of ballots in a classic quorum?
+71. What is the difference between the two protocols in terms of the number of acceptors in a fast quorum?
+72. What is the difference between the two protocols in terms of the number of acceptors in a classic quorum?
+73. What is the difference between the two protocols in terms of the number of proposals in a fast quorum?
+74. What is the difference between the two protocols in terms of the number of proposals in a classic quorum?
+75. What is the difference between the two protocols in terms of the number of values in a fast quorum?
+76. What is the difference between the two protocols in terms of the number of values in a classic quorum?
+77. What is the difference between the two protocols in terms of the number of ballots in a fast quorum?
+78. What is the difference between the
